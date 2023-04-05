@@ -1,7 +1,7 @@
 # CSCI-467-Project
 This is the final project for CSCI 467 Intro to Software Engineering. We are implementing a system that will allow a company to record sales quotes.
 
-<b>Quote System - Problem Statement</b>
+<b><u>Quote System - Problem Statement</u></b>
 
 As a group of software engineers with a company that sells plant repair services via a network of sales people, you are tasked to build a new system that enables the sales force to record their quotes via the Internet. The system will maintain a database of sales associates, handle the recording of sales quotes, establish and fulfill purchase orders. The system will also assign sales commissions for the sales associate.
 
