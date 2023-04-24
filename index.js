@@ -2,27 +2,29 @@ const express = require("express")
 const app = express()
 const router = express.Router()
 
+require('dotenv').config()
+
 const path = require("path")
 const engines = require("consolidate")
 
 const mysql = require("mysql")
 
 const legacy_conn = mysql.createConnection({
-    host: "blitz.cs.niu.edu",
-    port: 3306,
-    user: "student",
-    password: "student",
-    database: "csci467"
+    host: process.env.LEGACY_HOST,
+    port: process.env.LEGACY_PORT,
+    database: process.env.LEGACY_DATABASE,
+    user: process.env.LEGACY_USER,
+    password: process.env.LEGACY_PASSWORD
 })
 
 legacy_conn.connect()
 
 const conn = mysql.createConnection({
-    host: "csci-467.czudh81hwn5y.us-east-2.rds.amazonaws.com",
-    port: 3306,
-    database: "csci-467",
-    user: "admin",
-    password: "password"
+    host: process.env.HOST,
+    port: process.env.PORT,
+    database: process.env.DATABASE,
+    user: process.env.USER,
+    password: process.env.PASSWORD
 })
 
 conn.connect()
@@ -41,4 +43,4 @@ router.get('/office-login', (_, res) => res.render('office-login.html'))
 
 router.get('/on-site-login', (_, res) => res.render('on-site-login.html'))
 
-app.listen(process.env.PORT || 3000)
+app.listen(3000)
