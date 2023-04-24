@@ -1,0 +1,20 @@
+{
+  "name": "csci-467-project",
+  "version": "1.0.0",
+  "description": "This is the final project for CSCI 467 Intro to Software Engineering. We are implementing a system that will allow a company to record sales quotes.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "watch": "nodemon -e js,json,css,html"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "consolidate": "^0.16.0",
+    "express": "^4.18.2",
+    "mustache": "^4.2.0",
+    "nodemon": "^2.0.22"
+  }
+}
