@@ -2,8 +2,11 @@ const express = require("express")
 const app = express()
 const router = express.Router()
 
+require('dotenv').config()
+
 const path = require("path")
 const engines = require("consolidate")
+
 
 require("dotenv").config();
 
@@ -45,6 +48,7 @@ conn.connect((err) => {
 app.set('views', path.resolve(__dirname, 'views'));
 app.engine('html', engines.mustache)
 app.set('view engine', 'html');
+
 app.set('view engine', 'ejs');
 
 app.use("/public", express.static(path.resolve(__dirname, "public")))
