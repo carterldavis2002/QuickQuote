@@ -19,10 +19,7 @@
     "express-generator": "^4.2.0",
     "mustache": "^4.2.0",
     "mysql": "^2.18.1",
-<<<<<<< HEAD
-=======
     "express-session": "^1.17.3",
->>>>>>> 2f4311de25835b7e22b917f55cb713c47a0193be
     "nodemon": "^2.0.22"
   }
 }
