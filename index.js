@@ -56,7 +56,7 @@ router.get('/office-login', (_, res) => res.render('pages/office-login'))
 
 router.get('/on-site-login', (_, res) => res.render('pages/on-site-login'))
 
-router.get('/office-login', (_, res) => res.render('pages/office-login'))
+router.get('/office-portal', (_, res) => res.render('pages/office-portal'))
 
 // SQL query to pull customer names & ids from legacy DB
 let customer_list;
