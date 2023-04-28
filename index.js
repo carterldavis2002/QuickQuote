@@ -7,6 +7,8 @@ require('dotenv').config()
 const path = require("path")
 const engines = require("consolidate")
 
+var bodyParser = require('body-parser')
+app.use(bodyParser.urlencoded({extended: true}));
 
 require("dotenv").config();
 
@@ -60,7 +62,69 @@ router.get('/office-login', (_, res) => res.render('pages/office-login'))
 
 router.get('/on-site-login', (_, res) => res.render('pages/on-site-login'))
 
+// verifies on-site username and password
+router.post('/onsitelogin', function(request, response, next){
+  console.log(request.body);
+  var usrUsername = request.body.usernameInput;
+  var usrPswrd = request.body.passwordInput;
+
+  if(usrUsername && usrPswrd){
+    query = `SELECT * FROM office_workers WHERE id = "${usrUsername}"`;
+    conn.query(query, function(error, data){
+
+      if(data.length > 0){
+        for(var count = 0; count < data.length; count++){
+          if(data[count].password == usrPswrd)
+          {
+            response.redirect('/on-site-portal');
+          }else{
+            response.send('Incorrect Password');
+          }
+        }
+      }else{
+        response.send('Incorrect Username');
+      }
+      response.end();
+    });
+
+  }else{
+    response.send('Please Enter Login Info');
+    response.end();
+
+  }
+});
+
+// verifies office username and password
+router.post('/officelogin', function(request, response, next){
+  console.log(request.body);
+  var usrUsername = request.body.usernameInput;
+  var usrPswrd = request.body.passwordInput;
+  if(usrUsername && usrPswrd){
+    query = `SELECT * FROM office_workers WHERE id = "${usrUsername}"`;
+    conn.query(query, function(error, data){
+      if(data.length > 0){
+        for(var count = 0; count < data.length; count++){
+          if(data[count].password == usrPswrd)
+          {
+            response.redirect('/office-portal');
+          }else{
+            response.send('Incorrect Password');
+          }
+        }
+      }else{
+        response.send('Incorrect Username');
+      }
+      response.end();
+    });
+  }else{
+    response.send('Please Enter Login Info');
+    response.end();
+  }
+});
+
 router.get('/office-portal', (_, res) => res.render('pages/office-portal'))
+
+router.get('/create-quote', (_, res) => res.render('pages/create-quote'))
 
 // SQL query to pull customer names & ids from legacy DB
 let customer_list;
@@ -69,6 +133,8 @@ legacy_conn.query(sql1, (err, results1, fields) => {
   if(err) {
     throw err;
   }
+
+  console.log(results1);
   // convert to JSON string, replace ' with escape char
   customer_list = JSON.stringify(results1);
   customer_list = customer_list.replaceAll("'", "\\'");
@@ -81,6 +147,7 @@ conn.query(sql2, (err, results2, fields) => {
   if(err) {
     throw err;
   }
+
   // convert to JSON string, replace ' with escape char
   quote_list = JSON.stringify(results2);
   quote_list = quote_list.replaceAll("'", "\\'");
