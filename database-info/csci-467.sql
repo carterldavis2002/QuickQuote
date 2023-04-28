@@ -33,7 +33,7 @@ CREATE TABLE `line_items` (
   `price` decimal(10,2) NOT NULL,
   `secret_note` text,
   `quote_id` int NOT NULL,
-  PRIMARY KEY (`line_id`,`quote_id`),
+  PRIMARY KEY (`line_id`,`quote_id`),g
   KEY `quote_id_idx` (`quote_id`),
   CONSTRAINT `quote_id` FOREIGN KEY (`quote_id`) REFERENCES `quotes` (`quote_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -43,5 +43,6 @@ CREATE TABLE `office_workers` (
   `first_name` varchar(25) NOT NULL,
   `last_name` varchar(25) NOT NULL,
   `password` varchar(20) NOT NULL DEFAULT 'password',
+  `admin` tinyint NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
