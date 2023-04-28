@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <title>QuickQuote | On Site Portal</title>
@@ -44,7 +45,7 @@
         padding-bottom: 30px;
       }
 
-      .plain-text, .existing-quotes-text
+      .plain-text, .customer-name
       {
         font-size: 20px;
       }
@@ -123,70 +124,16 @@
       </div>
       <div class="logo-welcome-box">
         <div class="logo">QuickQuote</div>
-        <div class="welcome">Welcome</div>
       </div>
       <div class="plain-text">
-        Create New Quote
+        Creating quote for
       </div>
-      <form action=create-quote method = GET>
-        <select name="customer" id="customers" style="width:250px;"></select>
-        <div><input type=submit name=create value="Create"></div>
-      </form>
-      <div class="existing-quotes-text">Existing Quotes</div>
-      <div class="existing-quotes">
-        <table id="quotes" border=2 cellpadding="20">
-          <th>Date</th>
-          <th>Customer</th>
-          <th>Action</th>
+      <div class="customer-name">
+        Customer Name
       </div>
     </div>
     <script>
-      let sales_assoc = '<%- sales_assoc%>';
-      let customer_list = '<%- customer_list%>';
-      let quote_list = '<%- quote_list%>';
-
-      let sales_assoc_object = JSON.parse(sales_assoc);
-      let customer_object = JSON.parse(customer_list);
-      let quote_object = JSON.parse(quote_list);
-      
-      /*
-      document.querySelector('welcome').innerHTML = `Welcome, ${sales_assoc_object[0].first_name}`;
-      */
-     // loop through customer list object to create drop down list options
-      let customers = "";
-      for (i = 0; i < customer_object.length; i++)
-      {
-        customers+= `<option value="${customer_object[i].id}">${customer_object[i].name}</option>`;
-      }
-      document.getElementById("customers").innerHTML = customers;
-
-      // loop through quote list object to create table of quotes
-      let quote = `<tr><th>Date</th>
-        <th>Customer</th>
-        <th>Action</th></tr>`;
-      //loop through quote object
-      for (i = 0; i < quote_object.length; i++)
-      { // loop through customer object to pull names
-        for (j = 0; j < customer_object.length; j++)
-        {
-          if (quote_object[i].customer_id === customer_object[j].id)
-          {
-            // format date
-            let year = quote_object[i].date_time.slice(0, 4);
-            let day_month = quote_object[i].date_time.slice(5, 10);
-            
-            //let day = quote_object[i].date_time.slice(8, 10);
-            //append quote string to form table
-            quote+= `<tr><td>${day_month} ${year}</td>
-            <td>${customer_object[j].name}</td>
-            <td><button style="width:75px;" name="viewQuote" value="${quote_object[i].id}">View Quote</button></td></tr>`;
-          }
-        }
-      }
-
-      // render table
-      document.getElementById("quotes").innerHTML = quote;
-
+      const form = document.getElementsById('')
     </script>
   </body>
 </html>

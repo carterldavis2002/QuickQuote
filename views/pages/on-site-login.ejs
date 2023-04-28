@@ -17,14 +17,13 @@
       <div class="center">
         <div class="welcome-text">
           On Site Login
-        </div>
-          <input class="username-input" type="text" placeholder="username">
-          <input class="password-input" type="password" placeholder="password">
-          <div class="login-button">
-            <div class="login-text">
-              LOGIN
-            </div>
+          <form action="/onsitelogin" method="POST">
           </div>
+            <input class="username-input" type="text" placeholder="username" name="usernameInput"/>
+            <input class="password-input" type="password" placeholder="password" name="passwordInput"/>
+            <button type="submit" class="login-button">Login</button>
+          </form>
+        </div>
       </div>
   </body>
 </html>
