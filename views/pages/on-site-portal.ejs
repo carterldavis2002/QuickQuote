@@ -128,12 +128,11 @@
       <div class="plain-text">
         Create New Quote
       </div>
-      <p class="drop-down-menu">
-      </p>
+      <select id="customers" style="width:250px;"></select>
       <div><input type=submit name=create value="Create"></div>
       <div class="existing-quotes-text">Existing Quotes</div>
       <div class="existing-quotes">
-        <table border=2 cellpadding="20" background-color="red">
+        <table id="quotes" border=2 cellpadding="20">
           <th>Date</th>
           <th>Customer</th>
           <th>Action</th>
@@ -141,24 +140,41 @@
     </div>
     <script>
       let customer_list = '<%- customer_list%>';
+      let quote_list = '<%- quote_list%>';
+
       let customer_object = JSON.parse(customer_list);
-      console.log(customer_object);
+      let quote_object = JSON.parse(quote_list);
 
-      //let obj = JSON.parse(existing_quotes);
-      //existing_quotes = JSON.parse(existing_quotes);
-      //console.log(existing_quotes);
-      /*
-      let sql = 'SELECT name FROM customers;';
-    
-      let query = legacy_conn.query(sql, (err, results) => {
-        if(err) {
-          throw err;
+      console.log(quote_object);
+     
+     // loop through customer list object to create drop down list options
+      let customers = "";
+      for (i = 0; i < customer_object.length; i++)
+      {
+        customers+= `<option value="${customer_object[i].id}">${customer_object[i].name}</option>`;
+      }
+      document.getElementById("customers").innerHTML = customers;
+
+      // loop through quote list object to create table of quotes
+      let quote = `<tr><th>Date</th>
+        <th>Customer</th>
+        <th>Action</th></tr>`;
+
+      for (i = 0; i < quote_object.length; i++)
+      {
+        for (j = 0; j < customer_object.length; j++)
+        {
+          if (quote_object[i].customer_id === customer_object[j].id)
+          {
+            quote+= `<tr><td>${quote_object[i].date_time}</td>
+            <td>${customer_object[j].name}</td>
+            <td><button style="width:75px;" name="viewQuote" value="${quote_object[i].id}">View Quote</button></td></tr>`;
+          }
         }
-      });
-      */
+      }
 
-      customerlist.foreach(customer_list)
-      document.querySelector('.drop-down-menu') = `
+      document.getElementById("quotes").innerHTML = quote;
+
     </script>
   </body>
 </html>

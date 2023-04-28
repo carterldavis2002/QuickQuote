@@ -64,20 +64,33 @@ router.get('/office-portal', (_, res) => res.render('pages/office-portal'))
 
 // SQL query to pull customer names & ids from legacy DB
 let customer_list;
-let sql = 'SELECT id, name FROM customers;';
-legacy_conn.query(sql, (err, results, fiels) => {
+let sql1 = 'SELECT id, name FROM customers ORDER BY name;';
+legacy_conn.query(sql1, (err, results1, fields) => {
   if(err) {
     throw err;
   }
   // convert to JSON string, replace ' with escape char
-  customer_list = JSON.stringify(results);
+  customer_list = JSON.stringify(results1);
   customer_list = customer_list.replaceAll("'", "\\'");
+});
+
+// SQL query to pull quotes from quote table in new DB
+let quote_list;
+let sql2 = 'SELECT * FROM quotes ORDER BY date_time;';
+conn.query(sql2, (err, results2, fields) => {
+  if(err) {
+    throw err;
+  }
+  // convert to JSON string, replace ' with escape char
+  quote_list = JSON.stringify(results2);
+  quote_list = quote_list.replaceAll("'", "\\'");
 });
 
 //on-site portal page render
 router.get('/on-site-portal', (_, res) => {
   res.render('pages/on-site-portal', {
-    customer_list: customer_list
+    customer_list: customer_list,
+    quote_list: quote_list
   });
 });
 
