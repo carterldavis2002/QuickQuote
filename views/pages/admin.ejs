@@ -1,3 +1,9 @@
+<script
+  src="https://code.jquery.com/jquery-3.6.4.min.js"
+  integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="
+  crossorigin="anonymous"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
 <h3>Existing Sales Associates</h3>
 <p><%= associates.length %> records found</p>
 <table border=2 cellpadding="20">
@@ -10,13 +16,22 @@
         <th>Total Commission</th>
     </tr>
     <% for(let i = 0;i < associates.length;i++) { %>
-        <tr>
+        <tr id=<%= i %>>
             <td><%= associates[i].id %></td>
             <td><%= associates[i].password %></td>
             <td><%= associates[i].first_name %></td>
             <td><%= associates[i].last_name %></td>
             <td><%= associates[i].address %></td>
             <td><%= associates[i].total_commission %></td>
+           <td><button class="delete">Delete</button></td>
         </tr>
     <% } %>
 </table>
+
+<script>
+    $(".delete").on("click", (e) => {
+        let deleteRecord = e.target.parentElement.parentElement
+        axios.post('/delete-associate', {"associate": deleteRecord.children[0].innerText})
+        $(`#${deleteRecord.id}`).remove()
+    })
+</script>
