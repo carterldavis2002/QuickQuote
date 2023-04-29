@@ -1,0 +1,22 @@
+<h3>Existing Sales Associates</h3>
+<p><%= associates.length %> records found</p>
+<table border=2 cellpadding="20">
+    <tr>
+        <th>User ID</th>
+        <th>Password</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Address</th>
+        <th>Total Commission</th>
+    </tr>
+    <% for(let i = 0;i < associates.length;i++) { %>
+        <tr>
+            <td><%= associates[i].id %></td>
+            <td><%= associates[i].password %></td>
+            <td><%= associates[i].first_name %></td>
+            <td><%= associates[i].last_name %></td>
+            <td><%= associates[i].address %></td>
+            <td><%= associates[i].total_commission %></td>
+        </tr>
+    <% } %>
+</table>
