@@ -1,0 +1,67 @@
+<script
+  src="https://code.jquery.com/jquery-3.6.4.min.js"
+  integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8="
+  crossorigin="anonymous"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<h3>Existing Sales Associates</h3>
+<p id="record-num"><%= associates.length %> record(s) found</p>
+<table border=2 cellpadding="20">
+    <tr>
+        <th>User ID</th>
+        <th>Password</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Address</th>
+        <th>Total Commission</th>
+    </tr>
+    <% for(let i = 0;i < associates.length;i++) { %>
+        <tr id=<%= i %>>
+            <td><%= associates[i].id %></td>
+            <td><%= associates[i].password %></td>
+            <td><%= associates[i].first_name %></td>
+            <td><%= associates[i].last_name %></td>
+            <td><%= associates[i].address %></td>
+            <td><%= associates[i].total_commission %></td>
+           <td><button class="delete">Delete</button></td>
+        </tr>
+    <% } %>
+</table>
+
+<h3>Add New Sales Associate</h3>
+<form action="/add-associate" method="POST">
+    <div style="margin-bottom: 20px;">
+        <label for="user-id">User ID:</label>
+        <input required name="user-id" type="text">
+        <label for="password">Password:</label>
+        <input required name="password" type="text">
+    </div>
+
+    <div style="margin-bottom: 20px">
+        <label for="first-name">First Name:</label>
+        <input required name="first-name" type="text">
+        <label for="last-name">Last Name:</label>
+        <input required name="last-name" type="text">
+    </div>
+
+    <div style="margin-bottom: 20px">
+        <label for="address">Address:</label>
+        <input required name="address" type="text">
+    </div>
+
+    <div style="margin-bottom: 20px">
+        <label for="commission">Starting Commission:</label>
+        <input name="commission" required min="0" step="0.01" type="number" value="0">
+    </div>
+
+    <input type="submit" value="Add">
+</form>
+
+<script>
+    $(".delete").on("click", (e) => {
+        let deleteRecord = e.target.parentElement.parentElement
+        axios.post('/delete-associate', {"associate": deleteRecord.children[0].innerText})
+        $("#record-num").text(`${deleteRecord.parentElement.children.length - 2} record(s) found`)
+        $(`#${deleteRecord.id}`).remove()
+    })
+</script>
