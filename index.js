@@ -201,4 +201,10 @@ router.post('/delete-associate', (req, res) => {
   })
 })
 
+router.post('/add-associate', (req, res) => {
+  conn.query(`INSERT INTO sales_assoc VALUES ("${req.body['user-id']}", "${req.body['first-name']}", "${req.body['last-name']}", "${req.body['password']}", ${req.body['commission']}, "${req.body['address']}")`, () => {
+    res.redirect('admin')
+  })
+})
+
 app.listen(3000);
