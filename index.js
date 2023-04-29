@@ -9,6 +9,7 @@ const engines = require("consolidate")
 
 var bodyParser = require('body-parser')
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json())
 
 require("dotenv").config();
 
@@ -43,7 +44,7 @@ const conn = mysql.createConnection({
 const yaml = require('js-yaml')
 const fs = require('fs')
 const doc = yaml.load(fs.readFileSync('data.yaml', 'utf-8'))
-const reset_instance_data = false
+const reset_instance_data = true
 
 conn.connect((err) => {
   if(err) throw err;
@@ -192,5 +193,18 @@ router.get('/on-site-portal', (_, res) => {
     sales_assoc: sales_assoc_data
   });
 });
+
+router.post('/delete-associate', (req, res) => {
+  conn.query(`DELETE FROM sales_assoc WHERE id = "${req.body.associate}"`, (err) => {
+    if(err) res.send(err)
+    else res.send("Successfully deleted associate")
+  })
+})
+
+router.post('/add-associate', (req, res) => {
+  conn.query(`INSERT INTO sales_assoc VALUES ("${req.body['user-id']}", "${req.body['first-name']}", "${req.body['last-name']}", "${req.body['password']}", ${req.body['commission']}, "${req.body['address']}")`, () => {
+    res.redirect('admin')
+  })
+})
 
 app.listen(3000);
