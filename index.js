@@ -13,7 +13,16 @@ app.use(bodyParser.json())
 
 require("dotenv").config();
 
-const mysql = require("mysql")
+const mysql = require("mysql");
+
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+
+app.use(session({
+  secret : '467project',
+  resave : true,
+  saveUninitialized : true
+}));
 
 // Create legacy DB connection
 const legacy_conn = mysql.createConnection({
@@ -83,8 +92,6 @@ router.get('/office-login', (_, res) => res.render('pages/office-login'))
 router.get('/on-site-login', (_, res) => res.render('pages/on-site-login'))
 
 // verifies on-site username and password
-let sales_assoc_data; // variable to store sales associate's info
-
 router.post('/onsitelogin', function(request, response, next){
   var usrUsername = request.body.usernameInput;
   var usrPswrd = request.body.passwordInput;
@@ -99,8 +106,9 @@ router.post('/onsitelogin', function(request, response, next){
           {
             let salesAssoc = data;
             sales_assoc_data = JSON.stringify(salesAssoc);
-            sales_assoc_data = sales_assoc_data.replaceAll("'", "\\'");
 
+            request.session.user_id = data[count].id;
+            console.log(request.session.user_id);
             response.redirect('/on-site-portal');
           }else{
             response.send('Incorrect Password');
@@ -130,6 +138,8 @@ router.post('/officelogin', function(request, response, next){
         for(var count = 0; count < data.length; count++){
           if(data[count].password == usrPswrd)
           {
+            request.session.user_id = data[count].id;
+            console.log(request.session.user_id);
             response.redirect('/office-portal');
           }else{
             response.send('Incorrect Password');
@@ -157,7 +167,6 @@ router.get('/admin', (_, res) => {
     res.render('pages/admin', {associates: data})
   })
 })
-
 
 // SQL query to pull customer names & ids from legacy DB
 let customer_list;
@@ -206,5 +215,12 @@ router.post('/add-associate', (req, res) => {
     res.redirect('admin')
   })
 })
+
+// logout - ends session
+router.get('/logout', function(request, response, next){
+  console.log(request.session.user_id);
+  request.session.destroy();
+  response.redirect("/");
+});
 
 app.listen(3000);
