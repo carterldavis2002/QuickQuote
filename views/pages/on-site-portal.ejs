@@ -128,9 +128,10 @@
       <div class="plain-text">
         Create New Quote
       </div>
-      <form action=create-quote method = GET>
+      <form action="/create-quote" method = "POST">
         <select name="customer" id="customers" style="width:250px;"></select>
-        <div><input type=submit name=create value="Create"></div>
+        <div><input type="text" name="customer_email" placeholder="Customer email"></div>
+        <div><input type=submit name="Create" value="Create"></div>
       </form>
       <div class="existing-quotes-text">Existing Quotes</div>
       <div class="existing-quotes">
@@ -141,11 +142,12 @@
       </div>
     </div>
     <script>
-      // let sales_assoc = '<%- sales_assoc%>';
       let customer_list = '<%- customer_list%>';
       let quote_list = '<%- quote_list%>';
+      let user_id = '<%- user_id%>';
 
-      // let sales_assoc_object = JSON.parse(sales_assoc);
+      console.log(user_id);
+
       let customer_object = JSON.parse(customer_list);
       let quote_object = JSON.parse(quote_list);
       
