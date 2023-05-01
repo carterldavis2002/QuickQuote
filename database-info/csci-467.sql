@@ -23,7 +23,7 @@ CREATE TABLE `quotes` (
   `commission` decimal(10,2) NOT NULL DEFAULT '0.00',
   PRIMARY KEY (`quote_id`),
   KEY `sa_id_idx` (`sa_id`),
-  CONSTRAINT `sa_id` FOREIGN KEY (`sa_id`) REFERENCES `sales_assoc` (`id`)
+  CONSTRAINT `sa_id` FOREIGN KEY (`sa_id`) REFERENCES `sales_assoc` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `line_items` (
@@ -32,9 +32,9 @@ CREATE TABLE `line_items` (
   `price` decimal(10,2) NOT NULL,
   `secret_note` text,
   `quote_id` int NOT NULL,
-  PRIMARY KEY (`line_id`,`quote_id`),g
+  PRIMARY KEY (`line_id`,`quote_id`),
   KEY `quote_id_idx` (`quote_id`),
-  CONSTRAINT `quote_id` FOREIGN KEY (`quote_id`) REFERENCES `quotes` (`quote_id`)
+  CONSTRAINT `quote_id` FOREIGN KEY (`quote_id`) REFERENCES `quotes` (`quote_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `office_workers` (
