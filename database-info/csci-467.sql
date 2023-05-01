@@ -29,7 +29,6 @@ CREATE TABLE `quotes` (
 CREATE TABLE `line_items` (
   `line_id` int NOT NULL AUTO_INCREMENT,
   `description` text NOT NULL,
-  `line_item` varchar(45) NOT NULL,
   `price` decimal(10,2) NOT NULL,
   `secret_note` text,
   `quote_id` int NOT NULL,
