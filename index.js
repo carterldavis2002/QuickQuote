@@ -219,10 +219,14 @@ router.get('/edit-line-item', (_, res) => res.render('pages/edit-line-item'));
 router.get('/office-portal', (_, res) => res.render('pages/office-portal'))
 
 router.get('/admin', (_, res) => {
-  conn.query("SELECT * FROM sales_assoc", (err, data) => {
+  conn.query("SELECT * FROM sales_assoc", (err, assoc) => {
     if(err) throw err
 
-    res.render('pages/admin', {associates: data})
+    conn.query("SELECT * FROM quotes", (err, quotes) => {
+      if(err) throw err
+
+      res.render('pages/admin', {associates: assoc, quotes: quotes})
+    })
   })
 })
 
@@ -264,7 +268,6 @@ router.post('/delete-associate', (req, res) => {
   })
 })
 
-//Updates all but id because fk constraints
 router.post('/update-associate', (req, res) => {
   conn.query(`UPDATE sales_assoc SET id = "${req.body.new_vals[0]}", password = "${req.body.new_vals[1]}", first_name = "${req.body.new_vals[2]}", last_name = "${req.body.new_vals[3]}", address = "${req.body.new_vals[4]}", total_commission = ${parseFloat(req.body.new_vals[5])} WHERE id = "${req.body.old_id}"`, (err) => {
     if(err) res.send(err)
@@ -284,5 +287,19 @@ router.get('/logout', function(request, response, next){
   request.session.destroy();
   response.redirect("/");
 });
+
+router.post('/search_quotes', (req, res) => {
+  let query = `SELECT * FROM quotes`
+  if(req.body.assoc != "all") query += ` WHERE sa_id = "${req.body.assoc}"`
+
+  conn.query(query, (err, data) => {
+    if(err) throw err
+  
+    legacy_conn.query("SELECT * FROM customers", (err, cust) => {
+      if(err) throw err
+      else res.send({quotes: data, customers: cust})
+    })
+  })
+})
 
 app.listen(3000);

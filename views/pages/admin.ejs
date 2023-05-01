@@ -59,6 +59,20 @@
     <input type="submit" value="Add">
 </form>
 
+<h3>View Quotes</h3>
+<form id="quote-form">
+    <label for="assoc">Sales Associate:</label>
+    <select id="assoc" name="assoc">
+        <option value="all">all</option>
+        <% for(let i = 0;i < associates.length;i++) { %>
+            <option id=<%= associates[i].id %> value=<%= associates[i].id %>><%= associates[i].first_name + " " + associates[i].last_name %></option>
+        <% } %>
+    </select>
+    <input type="submit" value="Search">
+</form>
+
+<div id="found-quotes"></div>
+
 <script>
     $(".delete").on("click", (e) => {
         let deleteRecord = e.target.parentElement.parentElement
@@ -113,5 +127,24 @@
         }
         $(`#${editRecord.id} .old-id`).val($(`#${editRecord.id}`).children()[0].innerText)
         axios.post('/update-associate', {new_vals: new_vals, old_id: old_id})
+        window.location.reload()
+    })
+
+    $("#quote-form").submit(e => {
+        e.preventDefault()
+
+        $.post('/search_quotes', {
+            assoc: $(`#${e.target.id} #assoc`).val()
+        }).done(data => {
+            $("#found-quotes").children().remove()
+            
+            for(let i of data.quotes) {
+                $("#found-quotes").append(`
+                <hr>
+                <span>${i.quote_id} (${new Date(i.date_time).toLocaleDateString()}): ${$(`#${i.sa_id}`).text()} - ${data.customers.find(e => e.id == i.customer_id).name}</span>
+                <hr>
+                `)
+            }
+        })
     })
 </script>
