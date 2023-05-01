@@ -1,12 +1,12 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
-    <title>QuickQuote | Office Portal</title>
+    <title>QuickQuote | On Site Portal</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,500;0,600;0,700;1,100;1,200&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="public/styles/index-options.css">
-
     <style>
       body
       {
@@ -45,7 +45,7 @@
         padding-bottom: 30px;
       }
 
-      .plain-text
+      .plain-text, .customer-name, .quote_date
       {
         font-size: 20px;
       }
@@ -100,15 +100,43 @@
         font-size: 20px;
         height: 100%;
       }
+
+      .existing-quotes-text
+      {
+        margin-top: 20px;
+      }
+
+      .existing-quotes
+      {
+        width: 300px;
+      }
+
+      .price
+      {
+        margin-bottom: 20px;
+      }
+
+      .input-text
+      {
+        margin-top: 20px;
+      }
+
+      .text-box
+      {
+        width: 400px;
+        height: 200px
+      }
+
+      .update
+      {
+        margin-top: 20px;
+        margin-bottom: 25px;
+      }
     </style>
   </head>
   <body>
     <div class="background">
       <div class="top">
-        <a href="/adminbtn" class = "logout-button">
-          <div class="logout-text">
-            Admin Portal
-          </div>
         <a href="/logout" class = "logout-button">
           <div class="logout-text">
             Log Out
@@ -117,14 +145,31 @@
       </div>
       <div class="logo-welcome-box">
         <div class="logo">QuickQuote</div>
-        <div class="welcome">Welcome, Name</div>
       </div>
       <div class="plain-text">
-        View Existing Quote
+        Creating line item for
       </div>
-      <div class="drop-down-menu">
-        <input 
+      <div class="customer-name">Customer Name</div>
+      <form action="/add-line-item" method = "POST">
+          <div class="add-form">
+          <div class="input-text">Description</div>
+          <div><textarea class="text-box" type="text" width="200px" name="description"></textarea></div>
+          <div class="input-text">Note(s)</div>
+          <div><textarea class="text-box" type="text" name="hidden_note"></textarea></div>
+          <div class="input-text">Price: $<input type="text" name="price"></div>
+          <button class="update" type="submit" name="add" value="add">Add</button>
       </div>
+      </form>
     </div>
+    <script>
+      let quote_id = '<%- quote_id%>';
+      let customer_name = '<%- customer_name%>';
+
+      console.log(quote_id, customer_name);
+
+      document.querySelector('.customer-name').innerHTML = `<b>${customer_name}</b>`;
+
+      document.querySelector('.add-form').innerHTML += `<input type="hidden" name="quote_id" value="${quote_id}">`
+    </script>
   </body>
 </html>

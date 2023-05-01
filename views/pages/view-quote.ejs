@@ -151,11 +151,15 @@
           <th>Action</th>
         </table>
       </form>
+      <form action="/createlineitem" method = "POST">
+        <div class="addLineItem">
+          <button type="submit" name="addLineItem" value= style="width:75px;">Add Line Item</button>
+        </div>
+      </form>
+      </div>
       <div class="finalize-text">Click the button below to finalize the quote.</div>
       <div>Warning: Once a quote has been finalized, you will no longer be able make edits.</div>
-      <div>
-        <button class="finalizeQuote" type="submit" name="finalizeQuote" value="finalizeQuote" style="width:75px;"">Finalize Quote</button>
-      </div>
+      <div></div>
     </div>
     <script>
       let quote_info = JSON.parse('<%- quote_info%>');
@@ -173,10 +177,11 @@
 
       document.querySelector(".price").innerHTML = `Total price: $${quote_info[0].initial_total_price}`;
 
-      let line_items = `<th>Price</th>
+      let line_items = `
+          <th>Price</th>
           <th>Description</th>
           <th>Note(s)</th>
-          <th></th>
+          <th><input type="hidden" name="quote_id" value="${quote_info[0].quote_id}>"</th>
           </table>`;
 
       for (i = 0; i < line_items_info.length; i++)
@@ -185,15 +190,38 @@
         {
           line_items_info[i].hidden_note = "N/A";
         }
-        line_items += `
-        <tr><td>$${line_items_info[i].price}</td>
+/*
+        let line_edit = 
+        {
+          line_id: line_items_info[i].line_id,
+          quote_id: line_items_info[i].quote_id,
+          action: "edit"
+        };
+
+        let line_delete =
+        {
+          line_id: line_items_info[i].line_id,
+          quote_id: line_items_info[i].quote_id,
+          action: "delete"
+        };
+
+        let line_edit_string = JSON.stringify(line_edit);
+        let line_delete_string = JSON.stringify(line_delete);
+*/
+        line_items += `<tr><td>$${line_items_info[i].price}</td>
             <td>${line_items_info[i].description}</td>
             <td>${line_items_info[i].hidden_note}</td>
-            <td><button class="editLine" type="submit" name="editLine" value="${line_items_info[i].line_id}" style="width:75px;"">Edit</button></td></tr>`;
+            <td> 
+              <button type="submit" name="edit" value="${line_items_info[i].line_id}">Edit</button>
+              <button type="submit" name="delete" value="${line_items_info[i].line_id}">Delete</button>
+              </td></tr>`;
       }
 
       // render table
       document.getElementById("line_items").innerHTML = line_items;
+
+      let add_line_item = `<input type="hidden" name="customer_name" value="${customer_info[0].name}"><button type="submit" name="addLineItem" value="${quote_info[0].quote_id}" style="width:75px;">Add Line Item</button>`;
+      document.querySelector('.addLineItem').innerHTML = add_line_item;
 
     </script>
   </body>

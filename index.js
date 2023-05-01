@@ -152,6 +152,19 @@ router.post('/officelogin', function(request, response, next){
   }
 });
 
+//Route to admin page from office worker portal
+router.get('/adminbtn', function(request, response, next){
+  conn.query(`SELECT * FROM office_workers WHERE id = "${request.session.user_id}" AND admin = 1`, function(err, data2){
+    console.log(data2);
+    if(data2[0]){
+      response.redirect("/admin");
+    }else{
+      response.send("You do not have administrator privileges!")
+      response.end();
+    }
+  })
+});
+
 // creates new quote
 router.post('/create-quote', function(request, response, next){
   var customer_id = request.body.customer;
@@ -215,6 +228,78 @@ router.post('/viewquote', (req, res) => {
 });
 
 router.get('/edit-line-item', (_, res) => res.render('pages/edit-line-item'));
+
+router.post('/editlineitem', (req, res) => {
+  if (req.body.edit)
+  {
+    res.redirect('/edit-line-item');
+  }
+  else if (req.body.delete)
+  {
+    let sql_delete = `DELETE FROM line_items WHERE line_id = "${req.body.delete}" AND quote_id = "${req.body.quote_id}";`;
+    conn.query(sql_delete, function(err, data) {
+      if (err) res.send(err)
+      else {
+        let sql_total_price = `SELECT SUM(price) as 'price' FROM line_items WHERE quote_id = "${req.body.quote_id}"`;
+        conn.query(sql_total_price, (err, data2) => {
+          if(err) res.send(err, data2);
+          else {
+            let price = data2[0].price;
+            console.log(price);
+            let sql_update_price = `UPDATE quotes SET initial_total_price = "${price}" WHERE quote_id = "${req.body.quote_id}";`
+
+            conn.query(sql_update_price, function(err, data3) {
+              if (err) res.send(err);
+              else {
+                console.log('Line item deleted');
+                res.redirect('/on-site-portal');
+              }
+            })
+          }
+        })
+      }
+    })
+  }
+})
+
+// renders create-line-item page, redirects from view-quote page
+let quote_id, customer_name;
+router.get('/create-line-item', (req, res) => res.render('pages/create-line-item', {
+  quote_id: quote_id,
+  customer_name: customer_name
+}));
+
+router.post('/createlineitem', (req, res) => {
+  quote_id = req.body.addLineItem;
+  customer_name = req.body.customer_name;
+  res.redirect('/create-line-item');
+});
+
+// adds new line item, updates total price for quote, redirects to view-quote page
+router.post('/add-line-item', (req, res, next) => {
+  let sql_add = `INSERT INTO line_items (quote_id, description, price, hidden_note) VALUES ("${req.body.quote_id}", "${req.body.description}", "${req.body.price}", "${req.body.hidden_note}");`
+
+  conn.query(sql_add, function(err, data) {
+    if(err) {
+      res.send(err);
+    }
+    else {
+      let sql_get_cost = `SELECT SUM(price) as 'price' FROM line_items WHERE quote_id = "${req.body.quote_id}"`;
+      conn.query(sql_get_cost, (err, data2) => {
+        if(err) res.send(err, data2);
+        else {
+          let sql_update_cost = `UPDATE quotes SET initial_total_price = "${data2[0].price}" WHERE quote_id = "${quote_id}";`
+          conn.query(sql_update_cost, function(err, data3) {
+            if(err) res.send(err, data3);
+            else {
+              console.log('New line item added');
+              res.redirect('/on-site-portal');
+            }
+          })
+    }})
+    }
+  })
+})
 
 router.get('/office-portal', (_, res) => res.render('pages/office-portal'))
 
