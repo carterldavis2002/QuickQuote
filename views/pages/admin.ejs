@@ -25,6 +25,7 @@
             <td><%= associates[i].total_commission %></td>
             <td><button class="delete">Delete</button></td>
             <td><button class="edit">Edit</button></td>
+            <input type="hidden" class="old-id" value="<%= associates[i].id %>">
         </tr>
     <% } %>
 </table>
@@ -98,6 +99,7 @@
         }
 
         let new_vals = []
+        let old_id = $(`#${editRecord.id} .old-id`).val()
         $(`#${editRecord.id} .delete`).prop("disabled", false)
         e.target.innerText = "Edit"
         let j = 0
@@ -109,7 +111,7 @@
                 new_vals.push(i.innerText)
             }
         }
-
-        axios.post('/update-associate', {data: new_vals})
+        $(`#${editRecord.id} .old-id`).val($(`#${editRecord.id}`).children()[0].innerText)
+        axios.post('/update-associate', {new_vals: new_vals, old_id: old_id})
     })
 </script>

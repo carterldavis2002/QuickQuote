@@ -264,8 +264,12 @@ router.post('/delete-associate', (req, res) => {
   })
 })
 
+//Updates all but id because fk constraints
 router.post('/update-associate', (req, res) => {
-  //conn.query(`UPDATE sales_assoc WHERE `)
+  conn.query(`UPDATE sales_assoc SET id = "${req.body.new_vals[0]}", password = "${req.body.new_vals[1]}", first_name = "${req.body.new_vals[2]}", last_name = "${req.body.new_vals[3]}", address = "${req.body.new_vals[4]}", total_commission = ${parseFloat(req.body.new_vals[5])} WHERE id = "${req.body.old_id}"`, (err) => {
+    if(err) res.send(err)
+    else res.send("Successfully edited associate")
+  })
 })
 
 router.post('/add-associate', (req, res) => {
