@@ -23,7 +23,9 @@
             <td><%= associates[i].last_name %></td>
             <td><%= associates[i].address %></td>
             <td><%= associates[i].total_commission %></td>
-           <td><button class="delete">Delete</button></td>
+            <td><button class="delete">Delete</button></td>
+            <td><button class="edit">Edit</button></td>
+            <input type="hidden" class="old-id" value="<%= associates[i].id %>">
         </tr>
     <% } %>
 </table>
@@ -63,5 +65,53 @@
         axios.post('/delete-associate', {"associate": deleteRecord.children[0].innerText})
         $("#record-num").text(`${deleteRecord.parentElement.children.length - 2} record(s) found`)
         $(`#${deleteRecord.id}`).remove()
+    })
+
+    $(".edit").on("click", e => {
+        let editRecord = e.target.parentElement.parentElement
+        if(e.target.innerText == 'Edit') {
+            $(`#${editRecord.id} .delete`).prop("disabled", true)
+            e.target.innerText = "Update"
+
+            let j = 0
+            for(let i of $(`#${editRecord.id}`).children()) {
+                j++
+
+                if(j < 6) {
+                    let input = document.createElement('input')
+                    input.setAttribute('type', 'text')
+                    input.setAttribute('value', i.innerText)
+                    i.innerText = ''
+                    i.appendChild(input)
+                }
+                else if(j == 6) {
+                    let input = document.createElement('input')
+                    input.setAttribute('type', 'number')
+                    input.setAttribute('value', i.innerText)
+                    input.setAttribute('min', '0')
+                    input.setAttribute('step', '0.01')
+                    i.innerText = ''
+                    i.appendChild(input)
+                }
+            }
+
+            return
+        }
+
+        let new_vals = []
+        let old_id = $(`#${editRecord.id} .old-id`).val()
+        $(`#${editRecord.id} .delete`).prop("disabled", false)
+        e.target.innerText = "Edit"
+        let j = 0
+        for(let i of $(`#${editRecord.id}`).children()) {
+            j++
+
+            if(j <= 6) {
+                i.innerText = i.children[0].value
+                new_vals.push(i.innerText)
+            }
+        }
+        $(`#${editRecord.id} .old-id`).val($(`#${editRecord.id}`).children()[0].innerText)
+        axios.post('/update-associate', {new_vals: new_vals, old_id: old_id})
     })
 </script>
