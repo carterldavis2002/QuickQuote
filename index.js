@@ -214,6 +214,7 @@ router.post('/viewquote', (req, res) => {
   })
 });
 
+router.get('/edit-line-item', (_, res) => res.render('pages/edit-line-item'));
 
 router.get('/office-portal', (_, res) => res.render('pages/office-portal'))
 
