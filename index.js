@@ -41,7 +41,7 @@ legacy_conn.connect((err) => {
   console.log('Legacy Database connected...');
 }})
 
-//Create new DB connection
+// Create new DB connection
 const conn = mysql.createConnection({
   host: process.env.HOST,
   port: process.env.PORT,
@@ -53,13 +53,12 @@ const conn = mysql.createConnection({
 const yaml = require('js-yaml')
 const fs = require('fs')
 const doc = yaml.load(fs.readFileSync('data.yaml', 'utf-8'))
-const reset_instance_data = true
+const reset_instance_data = false;
 
 conn.connect((err) => {
   if(err) throw err;
   else {
     console.log('New Database connected...');
-
     if(reset_instance_data) {
       conn.query("DELETE FROM quotes")
       conn.query("DELETE FROM sales_assoc")
@@ -104,9 +103,6 @@ router.post('/onsitelogin', function(request, response, next){
         for(var count = 0; count < data.length; count++){
           if(data[count].password == usrPswrd)
           {
-            let salesAssoc = data;
-            sales_assoc_data = JSON.stringify(salesAssoc);
-
             request.session.user_id = data[count].id;
             console.log(request.session.user_id);
             response.redirect('/on-site-portal');
@@ -156,9 +152,71 @@ router.post('/officelogin', function(request, response, next){
   }
 });
 
-router.get('/office-portal', (_, res) => res.render('pages/office-portal'))
+// creates new quote
+router.post('/create-quote', function(request, response, next){
+  var customer_id = request.body.customer;
+  var customer_email = request.body.customer_email;
+  var user_id = request.session.user_id;
 
-router.get('/create-quote', (_, res) => res.render('pages/create-quote'))
+  if(customer_id && customer_email){
+    let sql_create = `INSERT INTO quotes (customer_id, sa_id, customer_email) VALUES ("${customer_id}", "${user_id}", "${customer_email}");`;
+    conn.query(sql_create, function(error, data){
+      if(error) {
+        response.send(error);
+      }
+      else
+      {
+        console.log('New quote created')
+        console.log(customer_id, customer_email, user_id);
+        response.redirect('/on-site-portal');
+      }
+    });
+
+  }else{
+    response.send('Please select a customer and enter a valid contact email.');
+    response.end();
+  }
+});
+
+// Renders 'view quote' page
+router.get('/view-quote', (req, res) => {
+  res.render('pages/view-quote', {
+    quote_info: quote_info,
+    line_items_info: line_items_info,
+    customer_info: customer_info
+  })
+  })
+
+// Pulls quote and line item info, redirects to 'view quote' page
+let quote_info, line_items_info, customer_info;
+router.post('/viewquote', (req, res) => {
+  conn.query(`SELECT * FROM quotes WHERE quote_id = "${req.body.viewQuote}"`, (err, data1) => {
+    if(err) res.send(err, data1);
+    else {
+      quote_info = JSON.stringify(data1);
+      conn.query(`SELECT * FROM line_items WHERE quote_id = "${req.body.viewQuote}"`, (err, data2) => {
+        if(err) res.send(err, data2);
+        else {
+          line_items_info = JSON.stringify(data2);
+          legacy_conn.query(`SELECT * FROM customers WHERE id = "${data1[0].customer_id}"`,
+          (err, data3) => {
+            if(err) res.send(err, data3);
+            else {
+              customer_info = JSON.stringify(data3);
+
+              console.log('Pulling quote information to display...')
+              res.redirect('/view-quote');
+            }
+          })
+        }
+      })
+    }
+  })
+});
+
+router.get('/edit-line-item', (_, res) => res.render('pages/edit-line-item'));
+
+router.get('/office-portal', (_, res) => res.render('pages/office-portal'))
 
 router.get('/admin', (_, res) => {
   conn.query("SELECT * FROM sales_assoc", (err, data) => {
@@ -181,25 +239,21 @@ legacy_conn.query(sql1, (err, results1, fields) => {
   customer_list = customer_list.replaceAll("'", "\\'");
 });
 
-// SQL query to pull quotes from quote table in new DB
-let quote_list;
-let sql2 = 'SELECT * FROM quotes ORDER BY date_time;';
-conn.query(sql2, (err, results2, fields) => {
-  if(err) {
-    throw err;
-  }
-
-  // convert to JSON string, replace ' with escape char
-  quote_list = JSON.stringify(results2);
-  quote_list = quote_list.replaceAll("'", "\\'");
-});
-
 //on-site portal page render
-router.get('/on-site-portal', (_, res) => {
-  res.render('pages/on-site-portal', {
-    customer_list: customer_list,
-    quote_list: quote_list,
-    sales_assoc: sales_assoc_data
+router.get('/on-site-portal', (request, res) => {
+  let user_id = request.session.user_id;
+  let sql = `SELECT * FROM quotes WHERE sa_id = '${user_id}' and finalized = 0;`;
+  let quote_list;
+  conn.query(sql, (err, results, fields) => {
+    if(err) {
+      throw err;
+    }
+    quote_list = JSON.stringify(results);
+    res.render('pages/on-site-portal', {
+      customer_list: customer_list,
+      quote_list: quote_list,
+      user_id: request.session.user_id
+    });
   });
 });
 

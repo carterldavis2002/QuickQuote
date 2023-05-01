@@ -45,7 +45,7 @@
         padding-bottom: 30px;
       }
 
-      .plain-text, .customer-name
+      .plain-text, .customer-name, .quote_date
       {
         font-size: 20px;
       }
@@ -111,6 +111,21 @@
         width: 300px;
       }
 
+      .price
+      {
+        margin-bottom: 20px;
+      }
+
+      .input-text
+      {
+        margin-top: 25px;
+      }
+
+      .text-box
+      {
+        width: 400px;
+        height: 200px
+      }
     </style>
   </head>
   <body>
@@ -126,14 +141,19 @@
         <div class="logo">QuickQuote</div>
       </div>
       <div class="plain-text">
-        Creating quote for
+        Editing line item for
       </div>
-      <div class="customer-name">
-        Customer Name
-      </div>
+      <div class="customer-name">Customer Name</div>
+      <form action="/update-line-item" method = "POST">
+      <div class="input-text">Description</div>
+      <div><textarea class="text-box" type="text" width="200px" name="description"></textarea></div>
+      <div class="input-text">Note(s)</div>
+      <div><textarea class="text-box" type="text" name="hidden_note"></textarea></div>
+      <div class="input-text">Price: $<input type="text" name="price"></div>
+      </form>
     </div>
     <script>
-      const form = document.getElementsById('')
+
     </script>
   </body>
 </html>
