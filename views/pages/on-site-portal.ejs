@@ -123,7 +123,7 @@
       </div>
       <div class="logo-welcome-box">
         <div class="logo">QuickQuote</div>
-        <div class="welcome">Welcome</div>
+        <div class="welcome">Welcome <%= JSON.parse(sales_assoc_data)[0].first_name + ', ' + JSON.parse(sales_assoc_data)[0].last_name %></div>
       </div>
       <div class="plain-text">
         Create New Quote
@@ -184,7 +184,6 @@
 
       // render table
       document.getElementById("quotes").innerHTML = quote;
-
     </script>
   </body>
 </html>
