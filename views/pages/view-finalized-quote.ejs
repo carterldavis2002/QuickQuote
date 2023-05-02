@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html>
   <head>
     <title>QuickQuote | On Site Portal</title>
@@ -45,7 +44,7 @@
         padding-bottom: 30px;
       }
 
-      .plain-text, .customer-name, .quote_date
+      .plain-text, .customer-name, .quote_date, .price-breakdown, .line-items-text
       {
         font-size: 20px;
       }
@@ -111,12 +110,22 @@
         width: 300px;
       }
 
-      .price
+      .finalize-text
       {
-        margin-bottom: 20px;
+        margin-top: 20px;
       }
 
-      .finalize-text
+      .price-breakdown
+      {
+        margin-top: 15px;
+      }
+
+      .price
+      {
+        font-size: 16px;
+      }
+
+      .line-items-text
       {
         margin-top: 20px;
       }
@@ -140,9 +149,13 @@
       <div class="customer-name">
         Customer Name
       </div>
+      <div class="date">Generated on Date</div>
       <div class="contact_email"></div>
-      <div class="price"></div>
-      <div class="plain-text">Line Items</div>
+      <div class="price-breakdown">
+        <div class="plain-text">Price Breakdown</div>
+        <div class="price"></div>
+      </div>
+      <div class="line-items-text">Line Items</div>
       <form action="/editlineitem" method = "POST">
         <table id="line_items" border=2 cellpadding="20" width="100%">
           <th>Price</th>
@@ -164,54 +177,63 @@
       </form>
     </div>
     <script>
-      let quote_info = JSON.parse('<%- quote_info%>');
-      let line_items_info = JSON.parse('<%- line_items_info%>');
+      let line_items = JSON.parse('<%- line_items%>');
       let customer_info = JSON.parse('<%- customer_info%>');
-      console.log(customer_info[0].name);
+      let quote_id = '<%- quote_id%>';
+      let quote_info = JSON.parse('<%- quote_info%>');
+      console.log(line_items, customer_info, quote_id, quote_info);
+
+      document.querySelector('.customer-name').innerHTML = `<b>${customer_info[0].name}`;
 
       let year = quote_info[0].date_time.slice(0, 4);
       let month = quote_info[0].date_time.slice(5, 7);
       let day = quote_info[0].date_time.slice(8, 10);
+      let date = `${month}/${day}, ${year}`;
 
-      document.querySelector(".customer-name").innerHTML = `<b>${customer_info[0].name}</b>, generated on ${month}/${day}, ${year}`;
+      document.querySelector('.date').innerHTML = `Generated on ${date} by ${quote_info[0].sa_id}`;
 
       document.querySelector(".contact_email").innerHTML = `Contact email: ${quote_info[0].customer_email}`;
 
-      document.querySelector(".price").innerHTML = `Total price: $${quote_info[0].initial_total_price}`;
+      let price_breakdown = `<div class="plain-text"><u>Price Breakdown</u></div>
+      <div class="price">Initial Total Price: $${quote_info[0].initial_total_price}</div>
+      <div class="price">Discount: $${quote_info[0].discount}</div>
+      <div class="price">Final Total Price: <b>$${quote_info[0].final_total_price}`;
 
-      let line_items = `
+      document.querySelector('.price-breakdown').innerHTML = price_breakdown;
+
+  
+      let line_items_table = `
           <th>Price</th>
           <th>Description</th>
           <th>Note(s)</th>
-          <th><input type="hidden" name="quote_id" value="${quote_info[0].quote_id}"><input type="hidden" name="return_page" value="view-quote"><input type="hidden" name="customer_id" value="${customer_info[0].id}"></th>
+          <th><input type="hidden" name="quote_id" value="${quote_info[0].quote_id}"><input type="hidden" name="customer_id" value="${customer_info[0].id}"><input type="hidden" name="customer_name" value="${customer_info[0].name}"><input type="hidden" name="return_page" value="view-finalized-quote"></th>
           </table>`;
 
-      for (i = 0; i < line_items_info.length; i++)
+      for (i = 0; i < line_items.length; i++)
       {
-        let hidden_note;
-        
-        if (!line_items_info[i].secret_note)
+        if (!line_items[i].secret_note)
         {
-          line_items_info[i].secret_note = "N/A";
+          line_items[i].secret_note = "N/A";
         }
 
-        line_items += `<tr><td>$${line_items_info[i].price}</td>
-            <td>${line_items_info[i].description}</td>
-            <td>${line_items_info[i].secret_note}</td>
+        line_items_table += `<tr><td>$${line_items[i].price}</td>
+            <td>${line_items[i].description}</td>
+            <td>${line_items[i].secret_note}</td>
             <td> 
-              <button type="submit" name="edit" value="${line_items_info[i].line_id}">Edit</button>
-              <button type="submit" name="delete" value="${line_items_info[i].line_id}">Delete</button>
+              <button type="submit" name="edit" value="${line_items[i].line_id}">Edit</button>
+              <button type="submit" name="delete" value="${line_items[i].line_id}">Delete</button>
               </td></tr>`;
       }
 
       // render table
-      document.getElementById("line_items").innerHTML = line_items;
+      document.getElementById("line_items").innerHTML = line_items_table;
 
-      let add_line_item = `<input type="hidden" name="customer_name" value="${customer_info[0].name}"><input type="hidden" name="return_page" value="view-quote"><button type="submit" name="quote_id" value="${quote_info[0].quote_id}">Add Line Item</button>`;
+      let add_line_item = `<input type="hidden" name="customer_name" value="${customer_info[0].name}"><input type="hidden" name="return_page" value="view-finalized-quote"><button type="submit" name="quote_id" value="${quote_id}">Add Line Item</button>`;
       document.querySelector('.addLineItem').innerHTML = add_line_item;
-
+/*
       let finalize_button = `<button type="submit" name="finalizeQuote" value="${quote_info[0].quote_id}">Finalize Quote</button>`;
       document.querySelector('.finalize-button').innerHTML = finalize_button;
+      */
     </script>
   </body>
 </html>
