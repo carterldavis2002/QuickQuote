@@ -227,12 +227,31 @@ router.post('/viewquote', (req, res) => {
   })
 });
 
-router.get('/edit-line-item', (_, res) => res.render('pages/edit-line-item'));
+let line_item, edit_customer_info, edit_quote_id;
+router.get('/edit-line-item', (_, res) => res.render('pages/edit-line-item', {
+  line_item: line_item,
+  customer_info: edit_customer_info,
+}));
 
 router.post('/editlineitem', (req, res) => {
   if (req.body.edit)
   {
-    res.redirect('/edit-line-item');
+    console.log(req.body.customer_id);
+    let sql_pull = `SELECT * FROM line_items WHERE line_id = "${req.body.edit}"`;
+    conn.query(sql_pull, (err, data) => {
+      if(err) res.send(err, data);
+      else {
+        line_item = JSON.stringify(data);
+        let sql_customer = `SELECT * FROM customers WHERE id = "${req.body.customer_id}"`;
+        legacy_conn.query(sql_customer, (err, data2) => {
+          if(err) res.send(err, data2);
+          else {
+            edit_customer_info = JSON.stringify(data2);
+            res.redirect('/edit-line-item');
+          }
+        })
+      }
+    })
   }
   else if (req.body.delete)
   {
@@ -262,6 +281,41 @@ router.post('/editlineitem', (req, res) => {
   }
 })
 
+// submits input for updating line item in associate interface to post
+router.post('/update-line-item', (req, res) => {
+  if (!req.body.price || !req.body.description) {
+    res.end('Please enter valid input.')
+  }
+  else if (typeof(Number(req.body.price)) != "Number")
+  {
+    res.end('Please enter a valid number for the price.')
+  }
+  else {
+    let sql_update = `UPDATE line_items SET description = "${req.body.description}", price = '${req.body.price}', secret_note = "${req.body.hidden_note}" WHERE (line_id = "${req.body.line_id}") and (quote_id = "${req.body.quote_id}");`
+
+    conn.query(sql_update, (err, data) => {
+      if(err) res.send(err, data)
+      else {
+        console.log('Line item updated');
+        let get_price = `SELECT SUM(price) as 'price' FROM line_items WHERE quote_id = "${req.body.quote_id}"`;
+        conn.query(get_price, (err, data3) => {
+          if(err) res.send(err, data3)
+          else {
+            let price = data3[0].price;
+            let sql_update_price = `UPDATE quotes SET initial_total_price = "${price}" WHERE quote_id = "${req.body.quote_id}";`
+            conn.query(sql_update_price, function(err, data2) {
+              if(err) res.send(err);
+              else {
+                console.log('Total price updated');
+                res.redirect('/on-site-portal');
+              }
+          })
+        }
+      })
+    }
+  })
+}})
+
 // renders create-line-item page, redirects from view-quote page
 let quote_id, customer_name;
 router.get('/create-line-item', (req, res) => res.render('pages/create-line-item', {
@@ -277,7 +331,16 @@ router.post('/createlineitem', (req, res) => {
 
 // adds new line item, updates total price for quote, redirects to view-quote page
 router.post('/add-line-item', (req, res, next) => {
-  let sql_add = `INSERT INTO line_items (quote_id, description, price, hidden_note) VALUES ("${req.body.quote_id}", "${req.body.description}", "${req.body.price}", "${req.body.hidden_note}");`
+
+  if (!req.body.price || !req.body.description) {
+    res.end('Please enter valid input.')
+  }
+  else if (typeof(Number(req.body.price)) != "Number")
+  {
+    res.end('Please enter a valid number for the price.')
+  }
+  else {
+  let sql_add = `INSERT INTO line_items (quote_id, description, price, secret_note) VALUES ("${req.body.quote_id}", "${req.body.description}", "${req.body.price}", "${req.body.hidden_note}");`
 
   conn.query(sql_add, function(err, data) {
     if(err) {
@@ -297,6 +360,19 @@ router.post('/add-line-item', (req, res, next) => {
             }
           })
     }})
+    }
+  })}
+})
+
+// finalizes quote on sales associate interface
+router.post('/finalize-quote', (req, res) => {
+  console.log(req.body.finalizeQuote);
+  let sql_finalize = `UPDATE quotes SET finalized = '1' WHERE quote_id = "${req.body.finalizeQuote}";`
+  conn.query(sql_finalize, function(err, data) {
+    if(err) res.send(err, data);
+    else {
+      console.log('Quote finalized');
+      res.redirect('/on-site-portal');
     }
   })
 })
