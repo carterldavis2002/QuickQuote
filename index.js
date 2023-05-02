@@ -286,7 +286,7 @@ router.post('/update-line-item', (req, res) => {
   if (!req.body.price || !req.body.description) {
     res.end('Please enter valid input.')
   }
-  else if (typeof(Number(req.body.price)) != "Number")
+  else if (isNaN(Number(req.body.price)))
   {
     res.end('Please enter a valid number for the price.')
   }
@@ -335,7 +335,7 @@ router.post('/add-line-item', (req, res, next) => {
   if (!req.body.price || !req.body.description) {
     res.end('Please enter valid input.')
   }
-  else if (typeof(Number(req.body.price)) != "Number")
+  else if (isNaN(Number(req.body.price)))
   {
     res.end('Please enter a valid number for the price.')
   }
