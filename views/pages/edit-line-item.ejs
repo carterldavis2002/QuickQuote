@@ -121,7 +121,7 @@
         margin-top: 20px;
       }
 
-      .text-box
+      .text-box, .description-box, .note-box
       {
         width: 400px;
         height: 200px
@@ -131,6 +131,12 @@
       {
         margin-top: 20px;
         margin-bottom: 25px;
+      }
+      
+      .price-box
+      {
+        height: 18px;
+        width: 60px
       }
     </style>
   </head>
@@ -151,16 +157,32 @@
       </div>
       <div class="customer-name">Customer Name</div>
       <form action="/update-line-item" method = "POST">
+        <div class="line_id"></div>
       <div class="input-text">Description</div>
-      <div><textarea class="text-box" type="text" width="200px" name="description"></textarea></div>
+      <div><textarea class="description-box" type="text" width="200px" height="300px" name="description"></textarea></div>
       <div class="input-text">Note(s)</div>
-      <div><textarea class="text-box" type="text" name="hidden_note"></textarea></div>
-      <div class="input-text">Price: $<input type="text" name="price"></div>
+      <div><textarea class="note-box" type="text" name="hidden_note"></textarea></div>
+      <div class="input-text">Price: $<textarea class="price-box" input type="text" name="price"></textarea></div>
       <button class="update" type="submit" name="update" value="update">Update</button>
       </form>
     </div>
     <script>
+      let line_item = JSON.parse('<%- line_item%>');
+      console.log(line_item);
+      
+      let customer_info = JSON.parse('<%- customer_info%>');
+      console.log(customer_info);
 
+      document.querySelector('.customer-name').innerHTML = `<b>${customer_info[0].name}</b>`
+
+      document.querySelector('.description-box').innerHTML = `${line_item[0].description}`;
+
+      document.querySelector('.note-box').innerHTML = `${line_item[0].secret_note}`;
+
+      document.querySelector('.price-box').innerHTML = `${line_item[0].price}`;
+
+      document.querySelector('.line_id').innerHTML = `<input type="hidden" name="line_id" value="${line_item[0].line_id}">
+      <input type="hidden" name="quote_id" value="${line_item[0].quote_id}">`;
     </script>
   </body>
 </html>
