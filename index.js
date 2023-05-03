@@ -190,38 +190,44 @@ router.post('/create-quote', function(request, response, next){
 
 // Renders 'view quote' page
 router.get('/view-quote', (req, res) => {
-  res.render('pages/view-quote', {
-    quote_info: quote_info,
-    line_items_info: line_items_info,
-    customer_info: customer_info
-  })
-  })
-
-// Pulls quote and line item info, redirects to 'view quote' page
-let quote_info, line_items_info, customer_info;
-router.post('/viewquote', (req, res) => {
-  conn.query(`SELECT * FROM quotes WHERE quote_id = "${req.body.viewQuote}"`, (err, data1) => {
+  console.log(view_quote_id);
+  conn.query(`SELECT * FROM quotes WHERE quote_id = "${view_quote_id}"`, (err, data1) => {
     if(err) res.send(err, data1);
     else {
+      console.log(data1);
       quote_info = JSON.stringify(data1);
-      conn.query(`SELECT * FROM line_items WHERE quote_id = "${req.body.viewQuote}"`, (err, data2) => {
+      conn.query(`SELECT * FROM line_items WHERE quote_id = "${view_quote_id}"`, (err, data2) => {
+        console.log(data2);
         if(err) res.send(err, data2);
         else {
           line_items_info = JSON.stringify(data2);
           legacy_conn.query(`SELECT * FROM customers WHERE id = "${data1[0].customer_id}"`,
           (err, data3) => {
+            console.log(data3);
             if(err) res.send(err, data3);
             else {
               customer_info = JSON.stringify(data3);
 
               console.log('Pulling quote information to display...')
-              res.redirect('/view-quote');
+              
+              res.render('pages/view-quote', {
+                quote_info: quote_info,
+                line_items_info: line_items_info,
+                customer_info: customer_info
+              })
             }
           })
         }
       })
     }
   })
+  })
+
+// Pulls quote and line item info, redirects to 'view quote' page
+let quote_info, line_items_info, customer_info;
+router.post('/viewquote', (req, res) => {
+  view_quote_id = req.body.viewQuote;
+  res.redirect('/view-quote');
 });
 
 let line_item, edit_customer_info, edit_quote_id;
