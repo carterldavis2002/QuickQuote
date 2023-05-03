@@ -619,49 +619,30 @@ router.post('/update-discount', (req, res) => {
   let discount_amount = Number(req.body.discount_amount);
   let initial_total_price = Number(req.body.initial_total_price);
 
-  if (!discount_amount && discount_amount !== 0)
+  console.log(`Quote ID: ${view_quote_id}, Return Page: ${return_page}, discount type: ${discount_type}, discount amount: ${discount_amount}, ${initial_total_price}`)
+
+  if (!discount_amount || discount_amount === 0)
   {
-    res.send('Error: Must enter a valid number // Nothing entered.')
-  }
-  else if (isNaN(discount_amount))
-  {
-    res.send('Error: Must enter a valid number // Not a number.')
+    console.log('No input');
   }
 
-  if (discount_type === "dollars")
-  {
-    if (discount_amount > initial_total_price || discount_amount < 0)
-    {
-      res.send('Error: Discount can not be greater than the initial total price.')
+  if (discount_type === "dollars") {
+  let new_final_price = initial_total_price - discount_amount;
+    conn.query(`UPDATE quotes SET discount = "${discount_amount}", final_total_price = "${new_final_price}" WHERE quote_id = "${view_quote_id}";`, (err) => {
+      if(err) res.send(err);
     }
-    else {
-      let new_final_price = initial_total_price - discount_amount;
-      conn.query(`UPDATE quotes SET discount = "${discount_amount}", final_total_price = "${new_final_price}" WHERE quote_id = "${view_quote_id}";`, (err) => {
-        if(err) res.send(err);
-        else {
-          res.redirect(return_page);
-        }
-      }
-    )}
-  }
+  )}
   else if (discount_type === "percent") {
-    if (discount_amount < 0 || discount_amount > 100) {
-      res.send('Error: Discount percentage must be a number between 0 and 100.')
+    let discount_amount_dollars = (discount_amount/100) * initial_total_price;
+    console.log(`Updated amount: ${discount_amount_dollars}`);
+    let new_final_price = initial_total_price - discount_amount_dollars;
+    conn.query(`UPDATE quotes SET discount = "${discount_amount_dollars}", final_total_price = "${new_final_price}" WHERE quote_id = "${view_quote_id}";`, (err) => {
+      if(err) res.send(err);
     }
-    else {
-      discount_amount = (discount_amount/100) * initial_total_price;
-      let new_final_price = initial_total_price - discount_amount;
-      conn.query(`UPDATE quotes SET discount = "${discount_amount}", final_total_price = "${new_final_price}" WHERE quote_id = "${view_quote_id}";`, (err) => {
-        if(err) res.send(err);
-        else {
-          res.redirect(return_page);
-        }
-      }
-      )
-    }
+    )
   }
+  res.redirect(return_page);
 })
-
 // sanction quote
 router.post('/sanction-quote', (req, res) => {
   view_quote_id = req.body.quote_id;

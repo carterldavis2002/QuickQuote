@@ -220,7 +220,7 @@
         <div class="update-discount-text">Update Discount</div>
         <input type="hidden" name="return_page" value="view-sanctioned-quote">
         <input type="hidden" name="initial_total_price" value="${quote_info[0].initial_total_price}">
-        <div class="enter-discount">$<textarea class="discount-box" type="text" name="discount_amount">${quote_info[0].discount}</textarea></div>
+        <div class="enter-discount">$<input type ="number" class="discount-box" name="discount_amount" min="0" max="${quote_info[0].initial_total_price}"></div>
         <div><input type="radio" id="dollars" name="discount_type" value="dollars" checked>
             <label for="dollars">Dollars</label>
           <input type="radio" id="percent" name="discount_type" value="percent">
@@ -240,12 +240,12 @@
 
           document.getElementById("dollars").addEventListener('click', function() {
             console.log('dollars');
-           document.querySelector(".enter-discount").innerHTML = `$<textarea class="discount-box" type="text" name="discount-amount">${quote_info[0].discount}</textarea>`;
+           document.querySelector(".enter-discount").innerHTML = `$<input type ="number" class="discount-box" name="discount_amount" min="0" max="${quote_info[0].initial_total_price}">`;
           })
 
           document.getElementById("percent").addEventListener('click', function() {
             console.log('percent');
-           document.querySelector(".enter-discount").innerHTML = `<textarea class="discount-box" type="text" name="discount_amount">${(quote_info[0].discount/quote_info[0].initial_total_price)*100}</textarea>%`;
+           document.querySelector(".enter-discount").innerHTML = `<input type ="number" class="discount-box" name="discount_amount" min="0" max="100">%`;
           })
         }
         else if (edit_discount === true) {
