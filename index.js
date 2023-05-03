@@ -513,10 +513,10 @@ router.post('/search_quotes', (req, res) => {
 
 // renders office portal page
 router.get('/office-portal', (req, res) => {
-  conn.query(`SELECT * FROM quotes WHERE finalized = '1' and sanctioned = '0'`, (err, finalized_quotes) => {
+  conn.query(`SELECT * FROM quotes WHERE finalized = '1' and sanctioned = '0' and ordered='0'`, (err, finalized_quotes) => {
     if (err) {throw err;}
     else {
-      conn.query(`SELECT * FROM quotes WHERE finalized=1 and sanctioned=1`, (err, sanctioned_quotes) => {
+      conn.query(`SELECT * FROM quotes WHERE finalized=1 and sanctioned=1 and ordered='0'`, (err, sanctioned_quotes) => {
         if(err) throw err;
         else {
           let finalized_quotes_string = JSON.stringify(finalized_quotes);
