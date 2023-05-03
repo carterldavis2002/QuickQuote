@@ -34,9 +34,7 @@ const legacy_conn = mysql.createConnection({
 })
 
 legacy_conn.connect((err) => {
-  if(err) {
-    throw err;
-  }
+  if(err) throw err;
   else {
   console.log('Legacy Database connected...');
 }})
@@ -119,7 +117,6 @@ router.post('/onsitelogin', function(request, response, next){
   }else{
     response.send('Please Enter Login Info');
     response.end();
-
   }
 });
 
@@ -136,7 +133,8 @@ router.post('/officelogin', function(request, response, next){
           {
             request.session.user_id = data[count].id;
             console.log(request.session.user_id);
-            response.redirect('/office-portal');
+            response.redirect('/
+            ');
           }else{
             response.send('Incorrect Password');
           }
@@ -152,7 +150,7 @@ router.post('/officelogin', function(request, response, next){
   }
 });
 
-//Route to admin page from office worker portal
+// Route to admin page from office worker portal
 router.get('/adminbtn', function(request, response, next){
   conn.query(`SELECT * FROM office_workers WHERE id = "${request.session.user_id}" AND admin = 1`, function(err, data2){
     console.log(data2);
@@ -234,10 +232,15 @@ router.get('/edit-line-item', (_, res) => res.render('pages/edit-line-item', {
 }));
 
 router.post('/editlineitem', (req, res) => {
+  quote_id = req.body.quote_id;
+  customer_name = req.body.customer_name;
+  return_page = req.body.return_page;
+
+  console.log(return_page);
+
   if (req.body.edit)
   {
-    console.log(req.body.customer_id);
-    let sql_pull = `SELECT * FROM line_items WHERE line_id = "${req.body.edit}"`;
+    let sql_pull = `SELECT * FROM line_items WHERE line_id = "${req.body.edit}" AND quote_id = "${quote_id}"`;
     conn.query(sql_pull, (err, data) => {
       if(err) res.send(err, data);
       else {
@@ -271,7 +274,7 @@ router.post('/editlineitem', (req, res) => {
               if (err) res.send(err);
               else {
                 console.log('Line item deleted');
-                res.redirect('/on-site-portal');
+                res.redirect(return_page);
               }
             })
           }
@@ -307,7 +310,7 @@ router.post('/update-line-item', (req, res) => {
               if(err) res.send(err);
               else {
                 console.log('Total price updated');
-                res.redirect('/on-site-portal');
+                res.redirect(return_page);
               }
           })
         }
@@ -317,15 +320,18 @@ router.post('/update-line-item', (req, res) => {
 }})
 
 // renders create-line-item page, redirects from view-quote page
-let quote_id, customer_name;
+let quote_id, customer_name, return_page;
 router.get('/create-line-item', (req, res) => res.render('pages/create-line-item', {
   quote_id: quote_id,
-  customer_name: customer_name
+  customer_name: customer_name,
+  return_page: return_page
 }));
 
 router.post('/createlineitem', (req, res) => {
-  quote_id = req.body.addLineItem;
+  quote_id = req.body.quote_id;
+  view_quote_id = req.body.quote_id;
   customer_name = req.body.customer_name;
+  return_page = req.body.return_page;
   res.redirect('/create-line-item');
 });
 
@@ -356,13 +362,9 @@ router.post('/add-line-item', (req, res, next) => {
             if(err) res.send(err, data3);
             else {
               console.log('New line item added');
-              res.redirect('/on-site-portal');
+              res.redirect(return_page);
             }
-          })
-    }})
-    }
-  })}
-})
+          })}})}})}})
 
 // finalizes quote on sales associate interface
 router.post('/finalize-quote', (req, res) => {
@@ -377,7 +379,17 @@ router.post('/finalize-quote', (req, res) => {
   })
 })
 
-router.get('/office-portal', (_, res) => res.render('pages/office-portal'))
+router.get('/admin', (_, res) => {
+  conn.query("SELECT * FROM sales_assoc", (err, assoc) => {
+    if(err) throw err
+
+    conn.query("SELECT * FROM quotes", (err, quotes) => {
+      if(err) throw err
+
+      res.render('pages/admin', {associates: assoc, quotes: quotes})
+    })
+  })
+})
 
 // SQL query to pull customer names & ids from legacy DB
 let customer_list;
@@ -387,13 +399,14 @@ legacy_conn.query(sql1, (err, results1, fields) => {
   if(err) {
     throw err;
   }
-
+  
   non_string_customers = results1
-
+  
   // convert to JSON string, replace ' with escape char
   customer_list = JSON.stringify(results1);
   customer_list = customer_list.replaceAll("'", "\\'");
 });
+
 
 router.get('/admin', (_, res) => {
   conn.query("SELECT * FROM sales_assoc", (err, assoc) => {
@@ -472,6 +485,127 @@ router.post('/search_quotes', (req, res) => {
       if(err) throw err
       else res.send({quotes: data, customers: cust})
     })
+  })
+})
+
+// renders office portal page
+router.get('/office-portal', (req, res) => {
+  conn.query(`SELECT * FROM quotes WHERE finalized = '1' and sanctioned = '0'`, (err, finalized_quotes) => {
+    if (err) {throw err;}
+    else {
+      conn.query(`SELECT * FROM quotes WHERE finalized=1 and sanctioned=1`, (err, sanctioned_quotes) => {
+        if(err) throw err;
+        else {
+          let finalized_quotes_string = JSON.stringify(finalized_quotes);
+          let sanctioned_quotes_string = JSON.stringify(sanctioned_quotes);
+
+          res.render('pages/office-portal', {
+            customer_list: customer_list,
+            finalized_quotes: finalized_quotes_string,
+            sanctioned_quotes: sanctioned_quotes_string
+      })}
+    }
+  )}
+})})
+
+// logic for view finalized quote
+let view_quote_id;
+router.post('/viewfinquote', (req, res) => {
+  console.log(`Pulling information about finalized quote ${req.body.quote_id}`);
+  view_quote_id = req.body.quote_id;
+  res.redirect('/view-finalized-quote');
+})
+
+router.get('/view-finalized-quote', (req, res) => {
+  conn.query(`SELECT * FROM quotes WHERE quote_id = "${view_quote_id}";`, (err, view_quote) => {
+    if(err) throw err;
+    console.log(view_quote);
+    let view_quote_string = JSON.stringify(view_quote);
+    legacy_conn.query(`SELECT * FROM customers WHERE id = "${view_quote[0].customer_id}";`, (err, view_customer) => {
+      if(err) throw err;
+
+      let view_customer_string = JSON.stringify(view_customer);
+      conn.query(`SELECT * FROM line_items WHERE quote_id = "${view_quote_id}";`, (err, view_line_items) => {
+        if(err) throw err;
+
+        let view_line_items_string = JSON.stringify(view_line_items);
+
+        res.render('pages/view-finalized-quote', {
+          quote_id: view_quote_id,
+          quote_info: view_quote_string,
+          customer_info: view_customer_string,
+          line_items: view_line_items_string
+        })
+      })
+    })
+  })
+})
+
+// logic for update discount
+router.post('/update-discount', (req, res) => {
+  console.log(`Attempting to update discount`);
+  view_quote_id = req.body.quote_id;
+  return_page = req.body.return_page;
+  let discount_type = req.body.discount_type;
+  let discount_amount = Number(req.body.discount_amount);
+  let initial_total_price = Number(req.body.initial_total_price);
+
+  console.log(view_quote_id, return_page, discount_type, discount_amount, initial_total_price);
+
+  if (!discount_amount && discount_amount !== 0)
+  {
+    res.send('Error: Must enter a valid number // Nothing entered.')
+  }
+  else if (isNaN(discount_amount))
+  {
+    res.send('Error: Must enter a valid number // Not a number.')
+  }
+
+  if (discount_type === "dollars")
+  {
+    if (discount_amount > initial_total_price || discount_amount < 0)
+    {
+      res.send('Error: Discount can not be greater than the initial total price.')
+    }
+    else {
+      let new_final_price = initial_total_price - discount_amount;
+      conn.query(`UPDATE quotes SET discount = "${discount_amount}", final_total_price = "${new_final_price}" WHERE quote_id = "${view_quote_id}";`, (err) => {
+        if(err) res.send(err);
+        else {
+          res.redirect(return_page);
+        }
+      }
+    )}
+  }
+  else if (discount_type === "percent") {
+    if (discount_amount < 0 || discount_amount > 100) {
+      res.send('Error: Discount percentage must be a number between 0 and 100.')
+    }
+    else {
+      discount_amount = (discount_amount/100) * initial_total_price;
+      let new_final_price = initial_total_price - discount_amount;
+      conn.query(`UPDATE quotes SET discount = "${discount_amount}", final_total_price = "${new_final_price}" WHERE quote_id = "${view_quote_id}";`, (err) => {
+        if(err) res.send(err);
+        else {
+          res.redirect(return_page);
+        }
+      }
+      )
+    }
+  }
+})
+
+// sanction quote
+router.post('/sanction-quote', (req, res) => {
+  view_quote_id = req.body.quote_id;
+
+  conn.query(`UPDATE quotes SET sanctioned='1' WHERE quote_id ="${view_quote_id}"`, (err) => {
+    if(err) throw err;
+    else {
+      return_page = req.body.return_page;
+      console.log(`Quote ${view_quote_id} has been sanctioned.`);
+      res.redirect('/office-portal');
+    }
   })
 })
 

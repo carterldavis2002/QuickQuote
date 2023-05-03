@@ -117,14 +117,98 @@
       </div>
       <div class="logo-welcome-box">
         <div class="logo">QuickQuote</div>
-        <div class="welcome">Welcome, Name</div>
+        <div class="welcome">Welcome</div>
       </div>
       <div class="plain-text">
-        View Existing Quote
+        View Finalized Quotes
       </div>
-      <div class="drop-down-menu">
-        <input 
+      <form action="/viewfinquote" method = "POST">
+      <table id="finquotes" border="1" cellpadding="20" width = "100%">
+        <th>Date</th>
+        <th>Customer</th>
+        <th>Sales Associate</th>
+        <th>Action</th>
+      </table>
+      </form>
+      <div class="plain-text">
+        View Sanctioned Quotes
       </div>
+      <form action="/viewsancquote" method = "POST">
+        <table id="sancquotes" border="1" cellpadding="20" width = "100%">
+          <th>Date</th>
+          <th>Customer</th>
+          <th>Sales Associate</th>
+          <th>Action</th>
+        </table>
+        </form>
     </div>
+    <script>
+      let customer_list = JSON.parse('<%- customer_list%>');
+      let sanctioned_quotes = JSON.parse('<%- sanctioned_quotes%>');
+      let finalized_quotes = JSON.parse('<%- finalized_quotes%>');
+
+      let finalized_table = `<th>Date</th>
+        <th>Customer</th>
+        <th>Sales Associate</th>
+        <th>Action</th>`;
+
+      let sanctioned_table = `<th>Date</th>
+          <th>Customer</th>
+          <th>Sales Associate</th>
+          <th>Action</th>`;
+
+      // loop through finalized_quotes to append table string with values
+      for (i = 0; i < finalized_quotes.length; i++)
+      {
+        for (j = 0; j < customer_list.length; j++)
+        {
+          if (finalized_quotes[i].customer_id === customer_list[j].id)
+          {
+            let customer = customer_list[j].name;
+            // format date
+            let year = finalized_quotes[i].date_time.slice(0, 4);
+            let month = finalized_quotes[i].date_time.slice(5, 7);
+            let day = finalized_quotes[i].date_time.slice(8, 10);
+            let date = `${month}/${day}, ${year}`;
+            
+            //append quote string to form table
+            finalized_table += `
+            <tr><td>${date}</td>
+            <td>${customer}</td>
+            <td>${finalized_quotes[i].sa_id}</td>
+            <td><button class="viewQuote" type="submit" name="quote_id" value="${finalized_quotes[i].quote_id}">View Quote</button></td></tr>`;
+          }
+        }
+      }
+
+      // loop through sanctioned_quotes to append html string with values
+      for (i = 0; i < sanctioned_quotes.length; i++)
+      {
+        for (j = 0; j < customer_list.length; j++)
+        {
+          if (sanctioned_quotes[i].customer_id === customer_list[j].id)
+          {
+            let customer = customer_list[j].name;
+            // format date
+            let year = sanctioned_quotes[i].date_time.slice(0, 4);
+            let month = sanctioned_quotes[i].date_time.slice(5, 7);
+            let day = sanctioned_quotes[i].date_time.slice(8, 10);
+            let date = `${month}/${day}, ${year}`;
+            
+            //append quote string to form table
+            sanctioned_table += `
+            <tr><td>${date}</td>
+            <td>${customer}</td>
+            <td>${sanctioned_quotes[i].sa_id}</td>
+            <td><button class="viewQuote" type="submit" name="quote" value="${JSON.stringify(sanctioned_quotes[i])}">View Quote</button></td></tr>`;
+          }
+        }
+      }
+
+      // render finalized quotes table with appended string of html
+      document.getElementById('finquotes').innerHTML = finalized_table;
+
+      document.getElementById('sancquotes').innerHTML = sanctioned_table;
+    </script>
   </body>
 </html>

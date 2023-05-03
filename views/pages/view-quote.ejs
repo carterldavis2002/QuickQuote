@@ -183,7 +183,7 @@
           <th>Price</th>
           <th>Description</th>
           <th>Note(s)</th>
-          <th><input type="hidden" name="quote_id" value="${quote_info[0].quote_id}"><input type="hidden" name="customer_id" value="${customer_info[0].id}"></th>
+          <th><input type="hidden" name="quote_id" value="${quote_info[0].quote_id}"><input type="hidden" name="return_page" value="view-quote"><input type="hidden" name="customer_id" value="${customer_info[0].id}"></th>
           </table>`;
 
       for (i = 0; i < line_items_info.length; i++)
@@ -207,7 +207,7 @@
       // render table
       document.getElementById("line_items").innerHTML = line_items;
 
-      let add_line_item = `<input type="hidden" name="customer_name" value="${customer_info[0].name}"><button type="submit" name="addLineItem" value="${quote_info[0].quote_id}">Add Line Item</button>`;
+      let add_line_item = `<input type="hidden" name="customer_name" value="${customer_info[0].name}"><input type="hidden" name="return_page" value="view-quote"><button type="submit" name="quote_id" value="${quote_info[0].quote_id}">Add Line Item</button>`;
       document.querySelector('.addLineItem').innerHTML = add_line_item;
 
       let finalize_button = `<button type="submit" name="finalizeQuote" value="${quote_info[0].quote_id}">Finalize Quote</button>`;
