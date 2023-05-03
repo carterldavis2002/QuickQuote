@@ -278,7 +278,7 @@ router.post('/editlineitem', (req, res) => {
                   let discount = Number(quote_entry[0].discount);
                   let final_price = initial_price - discount;
 
-                  conn.query(`UPDATE quotes set final_total_price = "${final_price}"`, function(err) {
+                  conn.query(`UPDATE quotes set final_total_price = "${final_price}" WHERE quote_id = "${quote_id}"`, function(err) {
                     if (err) res.send(err);
                     else {
                     if (Number(quote_entry[0].initial_total_price) < Number(quote_entry[0].discount)) {
@@ -429,18 +429,6 @@ router.post('/finalize-quote', (req, res) => {
       console.log('Quote finalized');
       res.redirect('/on-site-portal');
     }
-  })
-})
-
-router.get('/admin', (_, res) => {
-  conn.query("SELECT * FROM sales_assoc", (err, assoc) => {
-    if(err) throw err
-
-    conn.query("SELECT * FROM quotes", (err, quotes) => {
-      if(err) throw err
-
-      res.render('pages/admin', {associates: assoc, quotes: quotes})
-    })
   })
 })
 
