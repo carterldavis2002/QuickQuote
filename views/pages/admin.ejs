@@ -68,6 +68,13 @@
             <option id=<%= associates[i].id %> value=<%= associates[i].id %>><%= associates[i].first_name + " " + associates[i].last_name %></option>
         <% } %>
     </select>
+    <label for="cust">Customer:</label>
+    <select id="cust" name="cust">
+        <option value="all">all</option>
+        <% for(let i = 0;i < customers.length;i++) { %>
+            <option id=<%= customers[i].id %> value=<%= customers[i].id %>><%= customers[i].name %></option>
+        <% } %>
+    </select>
     <input type="submit" value="Search">
 </form>
 
@@ -132,9 +139,10 @@
 
     $("#quote-form").submit(e => {
         e.preventDefault()
-
+        
         $.post('/search_quotes', {
-            assoc: $(`#${e.target.id} #assoc`).val()
+            assoc: $(`#${e.target.id} #assoc`).val(), //Assoc id
+            cust: $(`#${e.target.id} #cust`).val() //Cust id
         }).done(data => {
             $("#found-quotes").children().remove()
             
