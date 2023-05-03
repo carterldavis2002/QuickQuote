@@ -133,8 +133,7 @@ router.post('/officelogin', function(request, response, next){
           {
             request.session.user_id = data[count].id;
             console.log(request.session.user_id);
-            response.redirect('/
-            ');
+            response.redirect('/office-portal');
           }else{
             response.send('Incorrect Password');
           }
