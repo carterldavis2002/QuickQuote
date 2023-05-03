@@ -193,17 +193,22 @@
       let quote_info = JSON.parse('<%- quote_info%>');
       console.log(line_items, customer_info, quote_id, quote_info);
 
+      // display customer name
       document.querySelector('.customer-name').innerHTML = `<b>${customer_info[0].name}`;
-
+      
+      // format date
       let year = quote_info[0].date_time.slice(0, 4);
       let month = quote_info[0].date_time.slice(5, 7);
       let day = quote_info[0].date_time.slice(8, 10);
       let date = `${month}/${day}, ${year}`;
-
+      
+      // display date
       document.querySelector('.date').innerHTML = `Generated on ${date} by ${quote_info[0].sa_id}`;
-
+      
+      // display email
       document.querySelector(".contact_email").innerHTML = `Contact email: ${quote_info[0].customer_email}`;
-
+      
+      // store string of of price breakdown
       let price_breakdown = `<div class="plain-text"><u>Price Breakdown</u></div>
       <div class="price">Initial Total Price: $${quote_info[0].initial_total_price}</div>
       <div class="price">Discount: $${quote_info[0].discount}</div>
@@ -211,6 +216,7 @@
         <input type="button" id="edit-discount-button" value="Edit Discount" name="Edit Discount">
       </div>`;
 
+      // store string of edit discount html
       let edit_discount_text = 
       `<div class="plain-text"><u>Price Breakdown</u></div>
       <div class="price">Initial Total Price: $${quote_info[0].initial_total_price}</div>
@@ -220,7 +226,7 @@
         <div class="update-discount-text">Update Discount</div>
         <input type="hidden" name="return_page" value="view-finalized-quote">
         <input type="hidden" name="initial_total_price" value="${quote_info[0].initial_total_price}">
-        <div class="enter-discount">$<textarea class="discount-box" type="text" name="discount_amount">${quote_info[0].discount}</textarea></div>
+        <div class="enter-discount">$<input type ="number" class="discount-box" name="discount_amount" min="0" max="${quote_info[0].initial_total_price}"></div>
         <div><input type="radio" id="dollars" name="discount_type" value="dollars" checked>
             <label for="dollars">Dollars</label>
           <input type="radio" id="percent" name="discount_type" value="percent">
@@ -228,10 +234,12 @@
         </div>
         <div><button class="update" type="submit" name="quote_id" value="${quote_id}">Update</button></div>
         </form>`;
-
+      
+      // display price breakdown
       let edit_discount = false;
       document.querySelector('.price-breakdown').innerHTML = price_breakdown;
-    
+        
+      // display edit discount when button is pressed
       document.getElementById("edit-discount-button").addEventListener('click', function() {
         
         if (edit_discount === false) {
@@ -240,12 +248,12 @@
 
           document.getElementById("dollars").addEventListener('click', function() {
             console.log('dollars');
-           document.querySelector(".enter-discount").innerHTML = `$<textarea class="discount-box" type="text" name="discount-amount">${quote_info[0].discount}</textarea>`;
+           document.querySelector(".enter-discount").innerHTML = `$<input type ="number" class="discount-box" name="discount_amount" min="0" max="${quote_info[0].initial_total_price}">`;
           })
 
           document.getElementById("percent").addEventListener('click', function() {
             console.log('percent');
-           document.querySelector(".enter-discount").innerHTML = `<textarea class="discount-box" type="text" name="discount_amount">${(quote_info[0].discount/quote_info[0].initial_total_price)*100}</textarea>%`;
+           document.querySelector(".enter-discount").innerHTML = `<input type ="number" class="discount-box" name="discount_amount" min="0" max="100">%`;
           })
         }
         else if (edit_discount === true) {
