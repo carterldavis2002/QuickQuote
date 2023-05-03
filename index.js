@@ -273,7 +273,7 @@ router.post('/editlineitem', (req, res) => {
               if (err) res.send(err);
               else {
                 console.log('Line item deleted');
-                res.redirect('/on-site-portal');
+                res.redirect(return_page);
               }
             })
           }
@@ -328,6 +328,7 @@ router.get('/create-line-item', (req, res) => res.render('pages/create-line-item
 
 router.post('/createlineitem', (req, res) => {
   quote_id = req.body.quote_id;
+  view_quote_id = req.body.quote_id;
   customer_name = req.body.customer_name;
   return_page = req.body.return_page;
   res.redirect('/create-line-item');
@@ -491,7 +492,7 @@ router.post('/viewfinquote', (req, res) => {
 router.get('/view-finalized-quote', (req, res) => {
   conn.query(`SELECT * FROM quotes WHERE quote_id = "${view_quote_id}";`, (err, view_quote) => {
     if(err) throw err;
-
+    console.log(view_quote);
     let view_quote_string = JSON.stringify(view_quote);
     legacy_conn.query(`SELECT * FROM customers WHERE id = "${view_quote[0].customer_id}";`, (err, view_customer) => {
       if(err) throw err;
@@ -510,6 +511,74 @@ router.get('/view-finalized-quote', (req, res) => {
         })
       })
     })
+  })
+})
+
+// logic for update discount
+router.post('/update-discount', (req, res) => {
+  console.log(`Attempting to update discount`);
+  view_quote_id = req.body.quote_id;
+  return_page = req.body.return_page;
+  let discount_type = req.body.discount_type;
+  let discount_amount = Number(req.body.discount_amount);
+  let initial_total_price = Number(req.body.initial_total_price);
+
+  console.log(view_quote_id, return_page, discount_type, discount_amount, initial_total_price);
+
+  if (!discount_amount && discount_amount !== 0)
+  {
+    res.send('Error: Must enter a valid number // Nothing entered.')
+  }
+  else if (isNaN(discount_amount))
+  {
+    res.send('Error: Must enter a valid number // Not a number.')
+  }
+
+  if (discount_type === "dollars")
+  {
+    if (discount_amount > initial_total_price || discount_amount < 0)
+    {
+      res.send('Error: Discount can not be greater than the initial total price.')
+    }
+    else {
+      let new_final_price = initial_total_price - discount_amount;
+      conn.query(`UPDATE quotes SET discount = "${discount_amount}", final_total_price = "${new_final_price}" WHERE quote_id = "${view_quote_id}";`, (err) => {
+        if(err) res.send(err);
+        else {
+          res.redirect(return_page);
+        }
+      }
+    )}
+  }
+  else if (discount_type === "percent") {
+    if (discount_amount < 0 || discount_amount > 100) {
+      res.send('Error: Discount percentage must be a number between 0 and 100.')
+    }
+    else {
+      discount_amount = (discount_amount/100) * initial_total_price;
+      let new_final_price = initial_total_price - discount_amount;
+      conn.query(`UPDATE quotes SET discount = "${discount_amount}", final_total_price = "${new_final_price}" WHERE quote_id = "${view_quote_id}";`, (err) => {
+        if(err) res.send(err);
+        else {
+          res.redirect(return_page);
+        }
+      }
+      )
+    }
+  }
+})
+
+// sanction quote
+router.post('/sanction-quote', (req, res) => {
+  view_quote_id = req.body.quote_id;
+
+  conn.query(`UPDATE quotes SET sanctioned='1' WHERE quote_id ="${view_quote_id}"`, (err) => {
+    if(err) throw err;
+    else {
+      return_page = req.body.return_page;
+      console.log(`Quote ${view_quote_id} has been sanctioned.`);
+      res.redirect('/office-portal');
+    }
   })
 })
 
