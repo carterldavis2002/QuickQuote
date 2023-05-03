@@ -120,11 +120,21 @@
       {
         margin-top: 20px;
       }
+
+      .date 
+      {
+        font-size: 16px;
+      }
     </style>
   </head>
   <body>
     <div class="background">
       <div class="top">
+        <a href="/on-site-portal" class = "logout-button">
+          <div class="logout-text">
+            Home
+          </div>
+        </a>
         <a href="/logout" class = "logout-button">
           <div class="logout-text">
             Log Out
@@ -140,6 +150,7 @@
       <div class="customer-name">
         Customer Name
       </div>
+      <div class="date"></div>
       <div class="contact_email"></div>
       <div class="price"></div>
       <div class="plain-text">Line Items</div>
@@ -173,7 +184,9 @@
       let month = quote_info[0].date_time.slice(5, 7);
       let day = quote_info[0].date_time.slice(8, 10);
 
-      document.querySelector(".customer-name").innerHTML = `<b>${customer_info[0].name}</b>, generated on ${month}/${day}, ${year}`;
+      document.querySelector(".customer-name").innerHTML = `<b>${customer_info[0].name}</b>`;
+
+      document.querySelector(".date").innerHTML = `Generated on ${month}/${day}, ${year}`;
 
       document.querySelector(".contact_email").innerHTML = `Contact email: ${quote_info[0].customer_email}`;
 

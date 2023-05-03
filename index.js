@@ -102,7 +102,7 @@ router.post('/onsitelogin', function(request, response, next){
           if(data[count].password == usrPswrd)
           {
             request.session.user_id = data[count].id;
-            console.log(request.session.user_id);
+            console.log(`User ${request.session.user_id} logged in...`);
             response.redirect('/on-site-portal');
           }else{
             response.send('Incorrect Password');
@@ -132,7 +132,7 @@ router.post('/officelogin', function(request, response, next){
           if(data[count].password == usrPswrd)
           {
             request.session.user_id = data[count].id;
-            console.log(request.session.user_id);
+            console.log(`User ${request.session.user_id} logged in...`);
             response.redirect('/office-portal');
           }else{
             response.send('Incorrect Password');
@@ -152,7 +152,7 @@ router.post('/officelogin', function(request, response, next){
 // Route to admin page from office worker portal
 router.get('/adminbtn', function(request, response, next){
   conn.query(`SELECT * FROM office_workers WHERE id = "${request.session.user_id}" AND admin = 1`, function(err, data2){
-    console.log(data2);
+
     if(data2[0]){
       response.redirect("/admin");
     }else{
@@ -177,7 +177,6 @@ router.post('/create-quote', function(request, response, next){
       else
       {
         console.log('New quote created')
-        console.log(customer_id, customer_email, user_id);
         response.redirect('/on-site-portal');
       }
     });
@@ -190,38 +189,43 @@ router.post('/create-quote', function(request, response, next){
 
 // Renders 'view quote' page
 router.get('/view-quote', (req, res) => {
-  res.render('pages/view-quote', {
-    quote_info: quote_info,
-    line_items_info: line_items_info,
-    customer_info: customer_info
-  })
-  })
-
-// Pulls quote and line item info, redirects to 'view quote' page
-let quote_info, line_items_info, customer_info;
-router.post('/viewquote', (req, res) => {
-  conn.query(`SELECT * FROM quotes WHERE quote_id = "${req.body.viewQuote}"`, (err, data1) => {
+  conn.query(`SELECT * FROM quotes WHERE quote_id = "${view_quote_id}"`, (err, data1) => {
     if(err) res.send(err, data1);
     else {
+
       quote_info = JSON.stringify(data1);
-      conn.query(`SELECT * FROM line_items WHERE quote_id = "${req.body.viewQuote}"`, (err, data2) => {
+      conn.query(`SELECT * FROM line_items WHERE quote_id = "${view_quote_id}"`, (err, data2) => {
+
         if(err) res.send(err, data2);
         else {
           line_items_info = JSON.stringify(data2);
           legacy_conn.query(`SELECT * FROM customers WHERE id = "${data1[0].customer_id}"`,
           (err, data3) => {
+
             if(err) res.send(err, data3);
             else {
               customer_info = JSON.stringify(data3);
 
               console.log('Pulling quote information to display...')
-              res.redirect('/view-quote');
+              
+              res.render('pages/view-quote', {
+                quote_info: quote_info,
+                line_items_info: line_items_info,
+                customer_info: customer_info
+              })
             }
           })
         }
       })
     }
   })
+  })
+
+// Pulls quote and line item info, redirects to 'view quote' page
+let quote_info, line_items_info, customer_info;
+router.post('/viewquote', (req, res) => {
+  view_quote_id = req.body.viewQuote;
+  res.redirect('/view-quote');
 });
 
 let line_item, edit_customer_info, edit_quote_id;
@@ -235,53 +239,69 @@ router.post('/editlineitem', (req, res) => {
   customer_name = req.body.customer_name;
   return_page = req.body.return_page;
 
-  console.log(return_page);
-
-  if (req.body.edit)
-  {
+  if (req.body.edit) {
     let sql_pull = `SELECT * FROM line_items WHERE line_id = "${req.body.edit}" AND quote_id = "${quote_id}"`;
     conn.query(sql_pull, (err, data) => {
-      if(err) res.send(err, data);
+      if (err) res.send(err, data);
       else {
         line_item = JSON.stringify(data);
         let sql_customer = `SELECT * FROM customers WHERE id = "${req.body.customer_id}"`;
         legacy_conn.query(sql_customer, (err, data2) => {
-          if(err) res.send(err, data2);
+          if (err) res.send(err, data2);
           else {
             edit_customer_info = JSON.stringify(data2);
             res.redirect('/edit-line-item');
           }
-        })
+        });
       }
-    })
-  }
-  else if (req.body.delete)
-  {
+    });
+  } else if (req.body.delete) {
     let sql_delete = `DELETE FROM line_items WHERE line_id = "${req.body.delete}" AND quote_id = "${req.body.quote_id}";`;
     conn.query(sql_delete, function(err, data) {
-      if (err) res.send(err)
+      if (err) res.send(err);
       else {
         let sql_total_price = `SELECT SUM(price) as 'price' FROM line_items WHERE quote_id = "${req.body.quote_id}"`;
         conn.query(sql_total_price, (err, data2) => {
-          if(err) res.send(err, data2);
+          if (err) res.send(err, data2);
           else {
             let price = data2[0].price;
-            console.log(price);
-            let sql_update_price = `UPDATE quotes SET initial_total_price = "${price}" WHERE quote_id = "${req.body.quote_id}";`
+            let sql_update_price = `UPDATE quotes SET initial_total_price = "${price}" WHERE quote_id = "${req.body.quote_id}";`;
 
             conn.query(sql_update_price, function(err, data3) {
               if (err) res.send(err);
               else {
                 console.log('Line item deleted');
-                res.redirect(return_page);
-              }
-            })
+                conn.query(`SELECT * FROM quotes WHERE quote_id = "${quote_id}"`, (err, quote_entry) => {
+                  if(err) throw err;
+
+                  let initial_price = Number(quote_entry[0].initial_total_price);
+                  let discount = Number(quote_entry[0].discount);
+                  let final_price = initial_price - discount;
+
+                  conn.query(`UPDATE quotes set final_total_price = "${final_price}"`, function(err) {
+                    if (err) res.send(err);
+                    else {
+                    if (Number(quote_entry[0].initial_total_price) < Number(quote_entry[0].discount)) {
+                      conn.query(`UPDATE quotes SET discount = '0', final_total_price = "${quote_entry[0].initial_total_price}" WHERE quote_id = "${quote_id}";`, (err) => {
+                        if (err) throw err;
+                        else {
+                          console.log(`Error: Discount for quote ${quote_id} was greater than the updated initial total price. Discount has been reset to $0.00.`);
+                        }
+                      });
+                  
+                    }
+                    res.redirect(return_page);
+                  }
+                });
+                }
+        )}});
           }
-        })
+        });
       }
-    })
+    });
   }
-})
+});
+
 
 // submits input for updating line item in associate interface to post
 router.post('/update-line-item', (req, res) => {
@@ -309,7 +329,28 @@ router.post('/update-line-item', (req, res) => {
               if(err) res.send(err);
               else {
                 console.log('Total price updated');
-                res.redirect(return_page);
+                conn.query(`SELECT * FROM quotes WHERE quote_id = "${quote_id}"`, (err, quote_entry) => {
+                  if(err) res.send(err);
+                  else {
+                    let initial_price = Number(quote_entry[0].initial_total_price);
+                    let discount = Number(quote_entry[0].discount);
+                    let final_price = initial_price - discount;
+                    conn.query(`UPDATE quotes SET final_total_price = "${final_price}" WHERE quote_id = "${quote_id}";`, function(err) {
+                      if (err) throw err;
+                      else {
+                        if (quote_entry[0].initial_total_price < quote_entry[0].discount) {
+                          conn.query(`UPDATE quotes SET discount = '0', final_total_price = "${quote_entry[0].initial_total_price}" WHERE quote_id = "${quote_id}";`, (err) => {
+                            if(err) throw err;
+                            else {
+                              console.log(`Error: Discount for quote ${quote_id} was greater than the updated initial total price. Discount has been reset to $0.00.`);
+                            }
+                          })
+                        }
+                        res.redirect(return_page);
+                      }
+                    });
+                  }
+                })
               }
           })
         }
@@ -361,13 +402,26 @@ router.post('/add-line-item', (req, res, next) => {
             if(err) res.send(err, data3);
             else {
               console.log('New line item added');
-              res.redirect(return_page);
+              conn.query(`SELECT * FROM quotes WHERE quote_id = "${req.body.quote_id}"`, (err, quote_entry) => {
+                if(err) throw err;
+                else {
+                  let initial_price = Number(quote_entry[0].initial_total_price);
+                  let discount = Number(quote_entry[0].discount);
+                  let final_price = initial_price - discount;
+
+                  conn.query(`UPDATE quotes SET final_total_price = "${final_price}" WHERE quote_id = "${quote_id}";`, function(err) {
+                    if (err) throw err;
+                    else {
+                      res.redirect(return_page);
+                    }
+                  });
+                }
+              })
             }
           })}})}})}})
 
 // finalizes quote on sales associate interface
 router.post('/finalize-quote', (req, res) => {
-  console.log(req.body.finalizeQuote);
   let sql_finalize = `UPDATE quotes SET finalized = '1' WHERE quote_id = "${req.body.finalizeQuote}";`
   conn.query(sql_finalize, function(err, data) {
     if(err) res.send(err, data);
@@ -455,7 +509,7 @@ router.post('/add-associate', (req, res) => {
 
 // logout - ends session
 router.get('/logout', function(request, response, next){
-  console.log(request.session.user_id);
+  console.log(`User ${request.session.user_id} logged out...`);
   request.session.destroy();
   response.redirect("/");
 });
@@ -489,10 +543,10 @@ router.post('/search_quotes', (req, res) => {
 
 // renders office portal page
 router.get('/office-portal', (req, res) => {
-  conn.query(`SELECT * FROM quotes WHERE finalized = '1' and sanctioned = '0'`, (err, finalized_quotes) => {
+  conn.query(`SELECT * FROM quotes WHERE finalized = '1' and sanctioned = '0' and ordered='0'`, (err, finalized_quotes) => {
     if (err) {throw err;}
     else {
-      conn.query(`SELECT * FROM quotes WHERE finalized=1 and sanctioned=1`, (err, sanctioned_quotes) => {
+      conn.query(`SELECT * FROM quotes WHERE finalized=1 and sanctioned=1 and ordered='0'`, (err, sanctioned_quotes) => {
         if(err) throw err;
         else {
           let finalized_quotes_string = JSON.stringify(finalized_quotes);
@@ -515,10 +569,15 @@ router.post('/viewfinquote', (req, res) => {
   res.redirect('/view-finalized-quote');
 })
 
+router.post('/viewsancquote', (req, res) => {
+  console.log(`Pulling information about sanctioned quote ${req.body.quote_id}`);
+  view_quote_id = req.body.quote_id;
+  res.redirect('/view-sanctioned-quote');
+})
+
 router.get('/view-finalized-quote', (req, res) => {
   conn.query(`SELECT * FROM quotes WHERE quote_id = "${view_quote_id}";`, (err, view_quote) => {
     if(err) throw err;
-    console.log(view_quote);
     let view_quote_string = JSON.stringify(view_quote);
     legacy_conn.query(`SELECT * FROM customers WHERE id = "${view_quote[0].customer_id}";`, (err, view_customer) => {
       if(err) throw err;
@@ -540,16 +599,37 @@ router.get('/view-finalized-quote', (req, res) => {
   })
 })
 
+router.get('/view-sanctioned-quote', (req, res) => {
+  conn.query(`SELECT * FROM quotes WHERE quote_id = "${view_quote_id}";`, (err, view_quote) => {
+    if(err) throw err;
+    let view_quote_string = JSON.stringify(view_quote);
+    legacy_conn.query(`SELECT * FROM customers WHERE id = "${view_quote[0].customer_id}";`, (err, view_customer) => {
+      if(err) throw err;
+
+      let view_customer_string = JSON.stringify(view_customer);
+      conn.query(`SELECT * FROM line_items WHERE quote_id = "${view_quote_id}";`, (err, view_line_items) => {
+        if(err) throw err;
+
+        let view_line_items_string = JSON.stringify(view_line_items);
+
+        res.render('pages/view-sanctioned-quote', {
+          quote_id: view_quote_id,
+          quote_info: view_quote_string,
+          customer_info: view_customer_string,
+          line_items: view_line_items_string
+        })
+      })
+    })
+  })
+})
+
 // logic for update discount
 router.post('/update-discount', (req, res) => {
-  console.log(`Attempting to update discount`);
   view_quote_id = req.body.quote_id;
   return_page = req.body.return_page;
   let discount_type = req.body.discount_type;
   let discount_amount = Number(req.body.discount_amount);
   let initial_total_price = Number(req.body.initial_total_price);
-
-  console.log(view_quote_id, return_page, discount_type, discount_amount, initial_total_price);
 
   if (!discount_amount && discount_amount !== 0)
   {
@@ -608,4 +688,4 @@ router.post('/sanction-quote', (req, res) => {
   })
 })
 
-app.listen(3000);
+app.listen(3000)
