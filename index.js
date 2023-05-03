@@ -133,7 +133,8 @@ router.post('/officelogin', function(request, response, next){
           {
             request.session.user_id = data[count].id;
             console.log(request.session.user_id);
-            response.redirect('/office-portal');
+            response.redirect('/
+            ');
           }else{
             response.send('Incorrect Password');
           }
@@ -392,17 +393,30 @@ router.get('/admin', (_, res) => {
 
 // SQL query to pull customer names & ids from legacy DB
 let customer_list;
+let non_string_customers;
 let sql1 = 'SELECT id, name FROM customers ORDER BY name;';
 legacy_conn.query(sql1, (err, results1, fields) => {
   if(err) {
     throw err;
   }
+  
+  non_string_customers = results1
+  
   // convert to JSON string, replace ' with escape char
   customer_list = JSON.stringify(results1);
   customer_list = customer_list.replaceAll("'", "\\'");
 });
 
-// on-site portal page render
+
+router.get('/admin', (_, res) => {
+  conn.query("SELECT * FROM sales_assoc", (err, assoc) => {
+    if(err) throw err
+
+    res.render('pages/admin', {associates: assoc, customers: non_string_customers})
+  })
+})
+
+//on-site portal page render
 router.get('/on-site-portal', (request, res) => {
   let user_id = request.session.user_id;
   let sql = `SELECT * FROM quotes WHERE sa_id = '${user_id}' and finalized = 0;`;
@@ -448,8 +462,21 @@ router.get('/logout', function(request, response, next){
 });
 
 router.post('/search_quotes', (req, res) => {
+  let args = 0
   let query = `SELECT * FROM quotes`
-  if(req.body.assoc != "all") query += ` WHERE sa_id = "${req.body.assoc}"`
+  if(req.body.assoc != "all") {
+    query += ` WHERE sa_id = "${req.body.assoc}"`
+    args++
+  }
+
+  if(req.body.cust != "all") {
+    if(args == 0)
+      query += ` WHERE`
+    else
+      query += ` AND`
+
+    query += ` customer_id = ${req.body.cust}`
+  }
 
   conn.query(query, (err, data) => {
     if(err) throw err
