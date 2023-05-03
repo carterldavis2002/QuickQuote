@@ -237,51 +237,62 @@ router.post('/editlineitem', (req, res) => {
 
   console.log(return_page);
 
-  if (req.body.edit)
-  {
+  if (req.body.edit) {
     let sql_pull = `SELECT * FROM line_items WHERE line_id = "${req.body.edit}" AND quote_id = "${quote_id}"`;
     conn.query(sql_pull, (err, data) => {
-      if(err) res.send(err, data);
+      if (err) res.send(err, data);
       else {
         line_item = JSON.stringify(data);
         let sql_customer = `SELECT * FROM customers WHERE id = "${req.body.customer_id}"`;
         legacy_conn.query(sql_customer, (err, data2) => {
-          if(err) res.send(err, data2);
+          if (err) res.send(err, data2);
           else {
             edit_customer_info = JSON.stringify(data2);
             res.redirect('/edit-line-item');
           }
-        })
+        });
       }
-    })
-  }
-  else if (req.body.delete)
-  {
+    });
+  } else if (req.body.delete) {
     let sql_delete = `DELETE FROM line_items WHERE line_id = "${req.body.delete}" AND quote_id = "${req.body.quote_id}";`;
     conn.query(sql_delete, function(err, data) {
-      if (err) res.send(err)
+      if (err) res.send(err);
       else {
         let sql_total_price = `SELECT SUM(price) as 'price' FROM line_items WHERE quote_id = "${req.body.quote_id}"`;
         conn.query(sql_total_price, (err, data2) => {
-          if(err) res.send(err, data2);
+          if (err) res.send(err, data2);
           else {
             let price = data2[0].price;
             console.log(price);
-            let sql_update_price = `UPDATE quotes SET initial_total_price = "${price}" WHERE quote_id = "${req.body.quote_id}";`
+            let sql_update_price = `UPDATE quotes SET initial_total_price = "${price}" WHERE quote_id = "${req.body.quote_id}";`;
 
             conn.query(sql_update_price, function(err, data3) {
               if (err) res.send(err);
               else {
                 console.log('Line item deleted');
-                res.redirect(return_page);
+                conn.query(`SELECT * FROM quotes WHERE quote_id = "${quote_id}"`, (err, quote_entry) => {
+                  if (err) res.send(err);
+                  else {
+                    if (quote_entry[0].initial_total_price < quote_entry[0].discount) {
+                      conn.query(`UPDATE quotes SET discount = '0', final_total_price = "${quote_entry[0].initial_total_price}" WHERE quote_id = "${quote_id}";`, (err) => {
+                        if (err) throw err;
+                        else {
+                          console.log(`Error: Discount for quote ${quote_id} was greater than the updated initial total price. Discount has been reset to $0.00.`);
+                        }
+                      });
+                    }
+                    res.redirect(return_page);
+                  }
+                });
               }
-            })
+            });
           }
-        })
+        });
       }
-    })
+    });
   }
-})
+});
+
 
 // submits input for updating line item in associate interface to post
 router.post('/update-line-item', (req, res) => {
@@ -309,7 +320,20 @@ router.post('/update-line-item', (req, res) => {
               if(err) res.send(err);
               else {
                 console.log('Total price updated');
-                res.redirect(return_page);
+                conn.query(`SELECT * FROM quotes WHERE quote_id = "${quote_id}"`, (err, quote_entry) => {
+                  if(err) res.send(err);
+                  else {
+                    if (quote_entry[0].initial_total_price < quote_entry[0].discount) {
+                      conn.query(`UPDATE quotes SET discount = '0', final_total_price = "${quote_entry[0].initial_total_price}" WHERE quote_id = "${quote_id}";`, (err) => {
+                        if(err) throw err;
+                        else {
+                          console.log(`Error: Discount for quote ${quote_id} was greater than the updated initial total price. Discount has been reset to $0.00.`)
+                        }
+                      })
+                    }
+                    res.redirect(return_page);
+                  }
+                })
               }
           })
         }
@@ -515,10 +539,15 @@ router.post('/viewfinquote', (req, res) => {
   res.redirect('/view-finalized-quote');
 })
 
+router.post('/viewsancquote', (req, res) => {
+  console.log(`Pulling information about sanctioned quote ${req.body.quote_id}`);
+  view_quote_id = req.body.quote_id;
+  res.redirect('/view-sanctioned-quote');
+})
+
 router.get('/view-finalized-quote', (req, res) => {
   conn.query(`SELECT * FROM quotes WHERE quote_id = "${view_quote_id}";`, (err, view_quote) => {
     if(err) throw err;
-    console.log(view_quote);
     let view_quote_string = JSON.stringify(view_quote);
     legacy_conn.query(`SELECT * FROM customers WHERE id = "${view_quote[0].customer_id}";`, (err, view_customer) => {
       if(err) throw err;
@@ -530,6 +559,30 @@ router.get('/view-finalized-quote', (req, res) => {
         let view_line_items_string = JSON.stringify(view_line_items);
 
         res.render('pages/view-finalized-quote', {
+          quote_id: view_quote_id,
+          quote_info: view_quote_string,
+          customer_info: view_customer_string,
+          line_items: view_line_items_string
+        })
+      })
+    })
+  })
+})
+
+router.get('/view-sanctioned-quote', (req, res) => {
+  conn.query(`SELECT * FROM quotes WHERE quote_id = "${view_quote_id}";`, (err, view_quote) => {
+    if(err) throw err;
+    let view_quote_string = JSON.stringify(view_quote);
+    legacy_conn.query(`SELECT * FROM customers WHERE id = "${view_quote[0].customer_id}";`, (err, view_customer) => {
+      if(err) throw err;
+
+      let view_customer_string = JSON.stringify(view_customer);
+      conn.query(`SELECT * FROM line_items WHERE quote_id = "${view_quote_id}";`, (err, view_line_items) => {
+        if(err) throw err;
+
+        let view_line_items_string = JSON.stringify(view_line_items);
+
+        res.render('pages/view-sanctioned-quote', {
           quote_id: view_quote_id,
           quote_info: view_quote_string,
           customer_info: view_customer_string,
@@ -608,4 +661,4 @@ router.post('/sanction-quote', (req, res) => {
   })
 })
 
-app.listen(3000);
+app.listen(3000)
