@@ -189,6 +189,11 @@ router.post('/create-quote', function(request, response, next){
 
 // Renders 'view quote' page
 router.get('/view-quote', (req, res) => {
+  if(!view_quote_id) {
+    res.redirect("/on-site-portal")
+    return
+  }
+
   conn.query(`SELECT * FROM quotes WHERE quote_id = "${view_quote_id}"`, (err, data1) => {
     if(err) res.send(err, data1);
     else {
