@@ -21,6 +21,7 @@
         height: 100%;
         background-image: linear-gradient(to bottom, rgb(17, 139, 232) , rgba(254, 251, 251, 0.755));
         flex-direction: column;
+        padding: 8px;
       }
 
       .logo
@@ -135,6 +136,14 @@
         height: 18px;
         width: 60px
       }
+
+      .styled-table
+      {
+        border-collapse: collapse;
+        margin: 5px 0;
+        min-width: 400px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+      }
     </style>
   </head>
   <body>
@@ -167,20 +176,20 @@
       </div>
       <div class="line-items-text">Line Items</div>
       <form action="/editlineitem" method = "POST">
-        <table id="line_items" border=2 cellpadding="20" width="100%">
+        <table class="styled-table" id="line_items" border=2 cellpadding="20" width="100%">
           <th>Price</th>
           <th>Description</th>
           <th>Note(s)</th>
           <th>Action</th>
         </table>
       </form>
+        <div class="finalize-text">Click the button below to send the quote to order.</div>
+        <div>Warning: Once a quote has been sent to order, it can no longer be edited.</div>
+        <form action="/sanction-quote" method="POST">
+          <div class="sanction-button"></div>
+        </form>
+        </div>
       </div>
-      <div class="finalize-text">Click the button below to sanction the quote.</div>
-      <div>Warning: Once a quote has been sanctioned, a final copy will be sent out to the customer.</div>
-      <form action="/sanction-quote" method="POST">
-        <div class="sanction-button"></div>
-      </form>
-    </div>
     <script>
       let line_items = JSON.parse('<%- line_items%>');
       let customer_info = JSON.parse('<%- customer_info%>');
@@ -275,7 +284,7 @@
       // render table
       document.getElementById("line_items").innerHTML = line_items_table;
 
-      let sanction_button = `<input type="hidden" name="return_page" value="office-portal"><button type="submit" name="quote_id" value="${quote_info[0].quote_id}">Sanction Quote</button>`;
+      let sanction_button = `<input type="hidden" name="return_page" value="office-portal"><button type="submit" name="quote_id" value="${quote_info[0].quote_id}">Send to Order</button>`;
       document.querySelector('.sanction-button').innerHTML = sanction_button;
     </script>
   </body>

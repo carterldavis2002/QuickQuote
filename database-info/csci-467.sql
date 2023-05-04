@@ -22,11 +22,13 @@ CREATE TABLE `quotes` (
   `commission_rate` decimal(5,2) NOT NULL DEFAULT '0.00',
   `commission` decimal(10,2) NOT NULL DEFAULT '0.00',
   `ordered` tinyint NOT NULL DEFAULT '0',
+  `quotescol` varchar(45) DEFAULT NULL,
+  `additional_discount` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `order_price` decimal(10,2) NOT NULL DEFAULT '0.00',
   PRIMARY KEY (`quote_id`),
   KEY `sa_id_idx` (`sa_id`),
   CONSTRAINT `sa_id` FOREIGN KEY (`sa_id`) REFERENCES `sales_assoc` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 CREATE TABLE `line_items` (
   `line_id` int NOT NULL AUTO_INCREMENT,

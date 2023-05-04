@@ -730,7 +730,9 @@ router.post('/update-discount', (req, res) => {
 router.post('/sanction-quote', (req, res) => {
   view_quote_id = req.body.quote_id;
 
-  conn.query(`UPDATE quotes SET sanctioned='1' WHERE quote_id ="${view_quote_id}"`, (err) => {
+  conn.query(`SELECT `)
+
+  conn.query(`UPDATE quotes SET sanctioned='1',  WHERE quote_id ="${view_quote_id}"`, (err) => {
     if(err) throw err;
     else {
       return_page = req.body.return_page;
