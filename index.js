@@ -534,6 +534,27 @@ router.post('/search_quotes', (req, res) => {
     args++
   }
 
+  if(req.body.from_date != '') {
+    if(args == 0)
+      query += ` WHERE`
+    else
+      query += ` AND`
+
+    query += ` date_time >= '${req.body.from_date} 00:00:00'`
+
+    args++
+  }
+
+  if(req.body.to_date != '') {
+    if(args == 0)
+      query += ` WHERE`
+    else
+      query += ` AND`
+
+    query += ` date_time <= '${req.body.to_date} 23:59:59'`
+    args++
+  }
+  
   conn.query(query, (err, data) => {
     if(err) throw err
   

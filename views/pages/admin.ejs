@@ -157,11 +157,13 @@
 
     $("#quote-form").submit(e => {
         e.preventDefault()
-        
+
         $.post('/search_quotes', {
             assoc: $(`#${e.target.id} #assoc`).val(), //Assoc id
             cust: $(`#${e.target.id} #cust`).val(), //Cust id
-            status: $(`#${e.target.id} #quote-status`).val() //status
+            status: $(`#${e.target.id} #quote-status`).val(), //status
+            from_date: $(`#${e.target.id} #from-date`).val(),
+            to_date: $(`#${e.target.id} #to-date`).val()
         }).done(data => {
             $("#found-quotes").children().remove()
             
