@@ -46,9 +46,14 @@
         padding-bottom: 30px;
       }
 
-      .plain-text
+      .plain-text, .sanctioned-text
       {
         font-size: 20px;
+      }
+
+      .sanctioned-text
+      {
+        margin-top: 25px;
       }
 
       .top
@@ -129,7 +134,7 @@
         <div class="welcome">Welcome</div>
       </div>
       <div class="plain-text">
-        View Finalized Quotes
+        <b>Finalized Quotes</b>
       </div>
       <form action="/viewfinquote" method = "POST">
       <table class="styled-table" id="finquotes" border="1" cellpadding="20" width = "80%">
@@ -139,8 +144,8 @@
         <th>Action</th>
       </table>
       </form>
-      <div class="plain-text">
-        View Sanctioned Quotes
+      <div class="sanctioned-text">
+        <b>Sanctioned Quotes</b>
       </div>
       <form action="/viewsancquote" method = "POST">
         <table class="styled-table" id="sancquotes" border="1" cellpadding="20" width = "80%">

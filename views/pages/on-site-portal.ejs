@@ -134,14 +134,14 @@
         <div class="welcome">Welcome </div>
       </div>
       <div class="plain-text">
-        Create New Quote
+        <b>Create New Quote</b>
       </div>
       <form action="/create-quote" method = "POST">
         <select name="customer" id="customers" style="width:250px;"></select>
         <div><input type="text" name="customer_email" placeholder="Customer email"></div>
         <div><input type=submit name="Create" value="Create"></div>
       </form>
-      <div class="existing-quotes-text">Existing Quotes</div>
+      <div class="existing-quotes-text"><b>Existing Quotes</b></div>
       <div class="existing-quotes">
         <form action="/viewquote" method = "POST">
         <table class="styled-table" id="quotes" border="1" cellpadding="20" width = "650px">
