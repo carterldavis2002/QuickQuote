@@ -18,6 +18,7 @@
         height: 100%;
         background-image: linear-gradient(to bottom, rgb(17, 139, 232) , rgba(254, 251, 251, 0.755));
         flex-direction: column;
+        padding: 8px;
       }
 
       .logo
@@ -132,6 +133,14 @@
         height: 18px;
         width: 60px
       }
+
+      .styled-table
+      {
+        border-collapse: collapse;
+        margin: 5px 0;
+        min-width: 400px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+      }
     </style>
 </head>
 <body>
@@ -167,11 +176,18 @@
             <div class="plain-text">Price Breakdown</div>
         </div>
         <div class="line-items-text">Line Items</div>
-        <table id="line_items" border=2 cellpadding="20" width="100%">
+        <table class ="styled-table" id="line_items" border=2 cellpadding="20" width="100%">
         </table>
     </div>
 </body>
 <script>
+
+    let initial_total_price = (Number('<%= quote_info[0].initial_total_price %>')).toFixed(2);
+    let discount = (Number('<%= quote_info[0].discount %>')).toFixed(2);
+    let final_total_price = (Number('<%= quote_info[0].final_total_price %>')).toFixed(2);
+    let additional_discount = (Number('<%= quote_info[0].additional_discount %>')).toFixed(2);
+    let order_price = (Number('<%= quote_info[0].order_price %>')).toFixed(2);
+
     document.querySelector('.customer-name').innerHTML = `<b>${'<%= customer_info[0].name %>'}</b>`;
 
     let date = new Date('<%= quote_info[0].date_time %>').toLocaleDateString()
@@ -190,14 +206,24 @@
 
     document.querySelector(".contact_email").innerHTML = `Email: <%= quote_info[0].customer_email %>`;
 
-    let initial_total_price = (Number('<%= quote_info[0].initial_total_price %>')).toFixed(2);
-    let discount = (Number('<%= quote_info[0].discount %>')).toFixed(2);
-    let final_total_price = (Number('<%= quote_info[0].final_total_price %>')).toFixed(2);
+    let price_breakdown;
 
-    let price_breakdown = `<div class="plain-text"><u>Price Breakdown</u></div>
+    if (('<%= quote_info[0].sanctioned %>') == 0) {
+      price_breakdown = `<div class="plain-text"><u>Price Breakdown</u></div>
+        <div class="price">Initial Total Price: $${initial_total_price}</div>
+        <div class="price">Discount: $${discount}</div>
+        <div class="price">Final Total Price: <b>$${final_total_price}</b></div>`
+    }
+    else {
+      price_breakdown = `<div class="plain-text"><u>Price Breakdown</u></div>
       <div class="price">Initial Total Price: $${initial_total_price}</div>
       <div class="price">Discount: $${discount}</div>
-      <div class="price">Final Total Price: <b>$${final_total_price}</b></div>`
+      <div class="price">Final Quote Price: $${final_total_price}<div>
+        <div class="price">Additional Discount: $${additional_discount}</div>
+        <div class="price">Order Price: <b>$${order_price}</b></div>
+      </div>`;
+    }
+
     document.querySelector('.price-breakdown').innerHTML = price_breakdown;
 
     let line_html = `
