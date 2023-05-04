@@ -183,8 +183,8 @@
           <th>Action</th>
         </table>
       </form>
-        <div class="finalize-text">Click the button below to sanction the quote.</div>
-        <div>Warning: Once a quote has been sanctioned, a final copy will be sent out to the customer.</div>
+        <div class="finalize-text">Click the button below to send the quote to order.</div>
+        <div>Warning: Once a quote has been sent to order, it can no longer be edited.</div>
         <form action="/sanction-quote" method="POST">
           <div class="sanction-button"></div>
         </form>
@@ -284,7 +284,7 @@
       // render table
       document.getElementById("line_items").innerHTML = line_items_table;
 
-      let sanction_button = `<input type="hidden" name="return_page" value="office-portal"><button type="submit" name="quote_id" value="${quote_info[0].quote_id}">Sanction Quote</button>`;
+      let sanction_button = `<input type="hidden" name="return_page" value="office-portal"><button type="submit" name="quote_id" value="${quote_info[0].quote_id}">Send to Order</button>`;
       document.querySelector('.sanction-button').innerHTML = sanction_button;
     </script>
   </body>
