@@ -22,6 +22,7 @@
         height: 100%;
         background-image: linear-gradient(to bottom, rgb(17, 139, 232) , rgba(254, 251, 251, 0.755));
         flex-direction: column;
+        padding: 8px;
       }
 
       .logo
@@ -45,9 +46,14 @@
         padding-bottom: 30px;
       }
 
-      .plain-text
+      .plain-text, .sanctioned-text
       {
         font-size: 20px;
+      }
+
+      .sanctioned-text
+      {
+        margin-top: 25px;
       }
 
       .top
@@ -100,6 +106,14 @@
         font-size: 20px;
         height: 100%;
       }
+
+      .styled-table
+      {
+        border-collapse: collapse;
+        margin: 5px 0;
+        min-width: 400px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+      }
     </style>
   </head>
   <body>
@@ -120,21 +134,21 @@
         <div class="welcome">Welcome</div>
       </div>
       <div class="plain-text">
-        View Finalized Quotes
+        <b>Finalized Quotes</b>
       </div>
       <form action="/viewfinquote" method = "POST">
-      <table id="finquotes" border="1" cellpadding="20" width = "100%">
+      <table class="styled-table" id="finquotes" border="1" cellpadding="20" width = "80%">
         <th>Date</th>
         <th>Customer</th>
         <th>Sales Associate</th>
         <th>Action</th>
       </table>
       </form>
-      <div class="plain-text">
-        View Sanctioned Quotes
+      <div class="sanctioned-text">
+        <b>Sanctioned Quotes</b>
       </div>
       <form action="/viewsancquote" method = "POST">
-        <table id="sancquotes" border="1" cellpadding="20" width = "100%">
+        <table class="styled-table" id="sancquotes" border="1" cellpadding="20" width = "80%">
           <th>Date</th>
           <th>Customer</th>
           <th>Sales Associate</th>
