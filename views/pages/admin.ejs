@@ -228,6 +228,10 @@
                 $("#found-quotes").append(`
                 <hr>
                 <span>${i.quote_id} (${new Date(i.date_time).toLocaleDateString()}): ${$(`#${i.sa_id}`).text()} - ${data.customers.find(e => e.id == i.customer_id).name} <i>(${status})</i> $${price}</span>
+                <form style="display: inline" action='/viewsearchquote' method='POST'>
+                    <input type="hidden" name="quote_id" value=${parseInt(i.quote_id)}>
+                    <input type="submit" value="View">
+                </form>
                 <hr>
                 `)
             }

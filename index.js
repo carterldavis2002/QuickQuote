@@ -599,7 +599,18 @@ router.post('/viewsancquote', (req, res) => {
   res.redirect('/view-sanctioned-quote');
 })
 
+router.post('/viewsearchquote', (req, res) => {
+  console.log(`Pulling information about searched quote ${req.body.quote_id}`)
+  view_quote_id = req.body.quote_id
+  res.redirect('/view-search-quote')
+})
+
 router.get('/view-finalized-quote', (req, res) => {
+  if(!view_quote_id) {
+    res.redirect("/office-portal")
+    return
+  }
+
   conn.query(`SELECT * FROM quotes WHERE quote_id = "${view_quote_id}";`, (err, view_quote) => {
     if(err) throw err;
     let view_quote_string = JSON.stringify(view_quote);
@@ -624,6 +635,11 @@ router.get('/view-finalized-quote', (req, res) => {
 })
 
 router.get('/view-sanctioned-quote', (req, res) => {
+  if(!view_quote_id) {
+    res.redirect("/office-portal")
+    return
+  }
+
   conn.query(`SELECT * FROM quotes WHERE quote_id = "${view_quote_id}";`, (err, view_quote) => {
     if(err) throw err;
     let view_quote_string = JSON.stringify(view_quote);
@@ -641,6 +657,32 @@ router.get('/view-sanctioned-quote', (req, res) => {
           quote_info: view_quote_string,
           customer_info: view_customer_string,
           line_items: view_line_items_string
+        })
+      })
+    })
+  })
+})
+
+router.get('/view-search-quote', (_, res) => {
+  if(!view_quote_id) {
+    res.redirect("/admin")
+    return
+  }
+
+  conn.query(`SELECT * FROM quotes WHERE quote_id = "${view_quote_id}";`, (err, quote) => {
+    if(err) throw err
+    
+    legacy_conn.query(`SELECT * FROM customers WHERE id = "${quote[0].customer_id}";`, (err, cust) => {
+      if(err) throw err
+      
+      conn.query(`SELECT * FROM line_items WHERE quote_id = "${view_quote_id}";`, (err, line_items) => {
+        if(err) throw err
+        
+        res.render('pages/view-search-quote', {
+          quote_id: view_quote_id,
+          quote_info: quote,
+          customer_info: cust,
+          line_items: line_items
         })
       })
     })
