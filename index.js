@@ -517,6 +517,21 @@ router.post('/search_quotes', (req, res) => {
       query += ` AND`
 
     query += ` customer_id = ${req.body.cust}`
+    args++
+  }
+
+  if(req.body.status != "all") {
+    if(args == 0)
+      query += ` WHERE`
+    else
+      query += ` AND`
+
+    if(req.body.status == 'ordered') query += ' ordered = 1'
+    else if(req.body.status == 'sanctioned') query += ' sanctioned = 1 AND ordered = 0'
+    else if(req.body.status == 'finalized') query += ' finalized = 1 AND sanctioned = 0 AND ordered = 0'
+    else query += ' finalized = 0 AND sanctioned = 0 AND ordered = 0'
+
+    args++
   }
 
   conn.query(query, (err, data) => {

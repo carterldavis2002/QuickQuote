@@ -68,6 +68,7 @@
             <option id=<%= associates[i].id %> value=<%= associates[i].id %>><%= associates[i].first_name + " " + associates[i].last_name %></option>
         <% } %>
     </select>
+
     <label for="cust">Customer:</label>
     <select id="cust" name="cust">
         <option value="all">all</option>
@@ -75,6 +76,16 @@
             <option id=<%= customers[i].id %> value=<%= customers[i].id %>><%= customers[i].name %></option>
         <% } %>
     </select>
+
+    <label for="quote-status">Quote Status:</label>
+    <select id="quote-status" name="quote-status">
+        <option value="all">all</option>
+        <option value="open">open</option>
+        <option value="finalized">finalized</option>
+        <option value="sanctioned">sanctioned</option>
+        <option value="ordered">ordered</option>
+    </select>
+
     <input type="submit" value="Search">
 </form>
 
@@ -142,14 +153,27 @@
         
         $.post('/search_quotes', {
             assoc: $(`#${e.target.id} #assoc`).val(), //Assoc id
-            cust: $(`#${e.target.id} #cust`).val() //Cust id
+            cust: $(`#${e.target.id} #cust`).val(), //Cust id
+            status: $(`#${e.target.id} #quote-status`).val() //status
         }).done(data => {
             $("#found-quotes").children().remove()
             
             for(let i of data.quotes) {
+                let status = "open"
+
+                if (i.ordered) status = "ordered"
+                else if (i.sanctioned) status = "sanctioned"
+                else if (i.finalized) status = "finalized"
+
+                let price = i.final_total_price.toString()
+                let idx = price.indexOf('.')
+
+                if (idx == -1) price += '.00'
+                else if (price.length - idx - 1 == 1) price += '0'
+
                 $("#found-quotes").append(`
                 <hr>
-                <span>${i.quote_id} (${new Date(i.date_time).toLocaleDateString()}): ${$(`#${i.sa_id}`).text()} - ${data.customers.find(e => e.id == i.customer_id).name}</span>
+                <span>${i.quote_id} (${new Date(i.date_time).toLocaleDateString()}): ${$(`#${i.sa_id}`).text()} - ${data.customers.find(e => e.id == i.customer_id).name} <i>(${status})</i> $${price}</span>
                 <hr>
                 `)
             }
