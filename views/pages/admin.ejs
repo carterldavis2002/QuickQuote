@@ -35,6 +35,14 @@
         opacity: 0.8;
         text-decoration: none;
     }
+
+    .styled-table
+    {
+        border-collapse: collapse;
+        margin: 5px 0;
+        min-width: 400px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    }
 </style>
 <div class="background">
     <div class="top">
@@ -51,7 +59,7 @@
       </div>
 <h3>Existing Sales Associates</h3>
 <p id="record-num"><%= associates.length %> record(s) found</p>
-<table border=2 cellpadding="20">
+<table class="styled-table" border=2 cellpadding="20">
     <tr>
         <th>User ID</th>
         <th>Password</th>

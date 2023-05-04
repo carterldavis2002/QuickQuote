@@ -125,6 +125,14 @@
       {
         font-size: 16px;
       }
+
+      .styled-table
+      {
+        border-collapse: collapse;
+        margin: 5px 0;
+        min-width: 400px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+      }
     </style>
   </head>
   <body>
@@ -155,7 +163,7 @@
       <div class="price"></div>
       <div class="plain-text">Line Items</div>
       <form action="/editlineitem" method = "POST">
-        <table id="line_items" border=2 cellpadding="20" width="100%">
+        <table class="styled-table" id="line_items" border=2 cellpadding="20" width="100%">
           <th>Price</th>
           <th>Description</th>
           <th>Note(s)</th>
