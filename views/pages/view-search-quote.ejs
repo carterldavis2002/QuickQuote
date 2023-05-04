@@ -158,7 +158,11 @@
             Customer Name
         </div>
         <div class="date">Generated on Date</div>
+        <div style="margin-top: 20px; font-size: 20px;"><u>Contact Information</u></div>
         <div class="contact_email"></div>
+        <div>Street: <%= customer_info[0].street %></div>
+        <div>City: <%= customer_info[0].city %></div>
+        <div>Contact: <%= customer_info[0].contact %></div>
         <div class="price-breakdown">
             <div class="plain-text">Price Breakdown</div>
         </div>
@@ -184,7 +188,7 @@
 
     document.querySelector('.date').innerHTML = `Generated on ${comma_date} by <%= quote_info[0].sa_id %>`;
 
-    document.querySelector(".contact_email").innerHTML = `Contact email: <%= quote_info[0].customer_email %>`;
+    document.querySelector(".contact_email").innerHTML = `Email: <%= quote_info[0].customer_email %>`;
 
     let initial_total_price = (Number('<%= quote_info[0].initial_total_price %>')).toFixed(2);
     let discount = (Number('<%= quote_info[0].discount %>')).toFixed(2);

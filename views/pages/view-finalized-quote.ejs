@@ -161,7 +161,11 @@
         Customer Name
       </div>
       <div class="date">Generated on Date</div>
+      <div style="margin-top: 20px; font-size: 20px;"><u>Contact Information</u></div>
       <div class="contact_email"></div>
+      <div>Street: <%= JSON.parse(customer_info)[0].street %></div>
+      <div>City: <%= JSON.parse(customer_info)[0].city %></div>
+      <div>Contact: <%= JSON.parse(customer_info)[0].contact %></div>
       <div class="price-breakdown">
         <div class="plain-text">Price Breakdown</div>
       </div>
@@ -212,7 +216,7 @@
       document.querySelector('.date').innerHTML = `Generated on ${date} by ${quote_info[0].sa_id}`;
       
       // display email
-      document.querySelector(".contact_email").innerHTML = `Contact email: ${quote_info[0].customer_email}`;
+      document.querySelector(".contact_email").innerHTML = `Email: ${quote_info[0].customer_email}`;
       
       // store string of of price breakdown
       let price_breakdown = `<div class="plain-text"><u>Price Breakdown</u></div>
