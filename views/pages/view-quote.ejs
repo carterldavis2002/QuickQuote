@@ -180,6 +180,8 @@
       let customer_info = JSON.parse('<%- customer_info%>');
       console.log(customer_info[0].name);
 
+      let initial_total_price = (Number(quote_info[0].initial_total_price)).toFixed(2);
+
       let year = quote_info[0].date_time.slice(0, 4);
       let month = quote_info[0].date_time.slice(5, 7);
       let day = quote_info[0].date_time.slice(8, 10);
@@ -190,7 +192,7 @@
 
       document.querySelector(".contact_email").innerHTML = `Contact email: ${quote_info[0].customer_email}`;
 
-      document.querySelector(".price").innerHTML = `Total price: $${quote_info[0].initial_total_price}`;
+      document.querySelector(".price").innerHTML = `Total price: $${initial_total_price}`;
 
       let line_items = `
           <th>Price</th>
@@ -207,8 +209,8 @@
         {
           line_items_info[i].secret_note = "N/A";
         }
-
-        line_items += `<tr><td>$${line_items_info[i].price}</td>
+        let line_price = (Number(line_items_info[i].price)).toFixed(2);
+        line_items += `<tr><td>$${line_price}</td>
             <td>${line_items_info[i].description}</td>
             <td>${line_items_info[i].secret_note}</td>
             <td> 

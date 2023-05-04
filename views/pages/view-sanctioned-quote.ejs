@@ -174,11 +174,6 @@
           <th>Action</th>
         </table>
       </form>
-      <form action="/createlineitem" method = "POST">
-        <div class="addLineItem">
-          <button type="submit" name="addLineItem" value= style="width:75px;">Add Line Item</button>
-        </div>
-      </form>
       </div>
       <div class="finalize-text">Click the button below to sanction the quote.</div>
       <div>Warning: Once a quote has been sanctioned, a final copy will be sent out to the customer.</div>
@@ -193,6 +188,10 @@
       let quote_info = JSON.parse('<%- quote_info%>');
       console.log(line_items, customer_info, quote_id, quote_info);
 
+      let initial_total_price = (Number(quote_info[0].initial_total_price)).toFixed(2);
+      let discount = (Number(quote_info[0].discount)).toFixed(2);
+      let final_total_price = (Number(quote_info[0].final_total_price)).toFixed(2);
+
       document.querySelector('.customer-name').innerHTML = `<b>${customer_info[0].name}`;
 
       let year = quote_info[0].date_time.slice(0, 4);
@@ -205,22 +204,22 @@
       document.querySelector(".contact_email").innerHTML = `Contact email: ${quote_info[0].customer_email}`;
 
       let price_breakdown = `<div class="plain-text"><u>Price Breakdown</u></div>
-      <div class="price">Initial Total Price: $${quote_info[0].initial_total_price}</div>
-      <div class="price">Discount: $${quote_info[0].discount}</div>
-      <div class="price">Final Total Price: <b>$${quote_info[0].final_total_price}</b> <div>
+      <div class="price">Initial Total Price: $${initial_total_price}</div>
+      <div class="price">Discount: $${discount}</div>
+      <div class="price">Final Total Price: <b>$${final_total_price}</b> <div>
         <input type="button" id="edit-discount-button" value="Edit Discount" name="Edit Discount">
       </div>`;
 
       let edit_discount_text = 
       `<div class="plain-text"><u>Price Breakdown</u></div>
-      <div class="price">Initial Total Price: $${quote_info[0].initial_total_price}</div>
-      <div class="price">Discount: $${quote_info[0].discount}</div>
-      <div class="price">Final Total Price: <b>$${quote_info[0].final_total_price}</b> <div>
+      <div class="price">Initial Total Price: $${initial_total_price}</div>
+      <div class="price">Discount: $${discount}</div>
+      <div class="price">Final Total Price: <b>$${final_total_price}</b> <div>
       <form action = '/update-discount' method='POST'>
         <div class="update-discount-text">Update Discount</div>
         <input type="hidden" name="return_page" value="view-sanctioned-quote">
         <input type="hidden" name="initial_total_price" value="${quote_info[0].initial_total_price}">
-        <div class="enter-discount">$<input type ="number" class="discount-box" name="discount_amount" min="0" max="${quote_info[0].initial_total_price}"></div>
+        <div class="enter-discount">$<input type ="number" step=".01" class="discount-box" name="discount_amount" min="0" max="${quote_info[0].initial_total_price}"></div>
         <div><input type="radio" id="dollars" name="discount_type" value="dollars" checked>
             <label for="dollars">Dollars</label>
           <input type="radio" id="percent" name="discount_type" value="percent">
@@ -240,12 +239,12 @@
 
           document.getElementById("dollars").addEventListener('click', function() {
             console.log('dollars');
-           document.querySelector(".enter-discount").innerHTML = `$<input type ="number" class="discount-box" name="discount_amount" min="0" max="${quote_info[0].initial_total_price}">`;
+           document.querySelector(".enter-discount").innerHTML = `$<input type ="number" step=".01" class="discount-box" name="discount_amount" min="0" max="${quote_info[0].initial_total_price}">`;
           })
 
           document.getElementById("percent").addEventListener('click', function() {
             console.log('percent');
-           document.querySelector(".enter-discount").innerHTML = `<input type ="number" class="discount-box" name="discount_amount" min="0" max="100">%`;
+           document.querySelector(".enter-discount").innerHTML = `<input type ="number" step=".01" class="discount-box" name="discount_amount" min="0" max="100">%`;
           })
         }
         else if (edit_discount === true) {
@@ -253,14 +252,12 @@
           document.querySelector(".price-breakdown").innerHTML = price_breakdown;
         }
       });
-/*
 
-*/
       let line_items_table = `
           <th>Price</th>
           <th>Description</th>
           <th>Note(s)</th>
-          <th><input type="hidden" name="quote_id" value="${quote_info[0].quote_id}"><input type="hidden" name="customer_id" value="${customer_info[0].id}"><input type="hidden" name="customer_name" value="${customer_info[0].name}"><input type="hidden" name="return_page" value="view-sanctioned-quote"></th>
+          <input type="hidden" name="quote_id" value="${quote_info[0].quote_id}"><input type="hidden" name="customer_id" value="${customer_info[0].id}"><input type="hidden" name="customer_name" value="${customer_info[0].name}"><input type="hidden" name="return_page" value="view-sanctioned-quote">
           </table>`;
 
       for (i = 0; i < line_items.length; i++)
@@ -269,21 +266,14 @@
         {
           line_items[i].secret_note = "N/A";
         }
-
-        line_items_table += `<tr><td>$${line_items[i].price}</td>
+        let line_price = (Number(line_items[i].price)).toFixed(2);
+        line_items_table += `<tr><td>$${line_price}</td>
             <td>${line_items[i].description}</td>
-            <td>${line_items[i].secret_note}</td>
-            <td> 
-              <button type="submit" name="edit" value="${line_items[i].line_id}">Edit</button>
-              <button type="submit" name="delete" value="${line_items[i].line_id}">Delete</button>
-              </td></tr>`;
+            <td>${line_items[i].secret_note}</td></tr>`;
       }
 
       // render table
       document.getElementById("line_items").innerHTML = line_items_table;
-
-      let add_line_item = `<input type="hidden" name="customer_name" value="${customer_info[0].name}"><input type="hidden" name="return_page" value="view-sanctioned-quote"><button type="submit" name="quote_id" value="${quote_id}">Add Line Item</button>`;
-      document.querySelector('.addLineItem').innerHTML = add_line_item;
 
       let sanction_button = `<input type="hidden" name="return_page" value="office-portal"><button type="submit" name="quote_id" value="${quote_info[0].quote_id}">Sanction Quote</button>`;
       document.querySelector('.sanction-button').innerHTML = sanction_button;
