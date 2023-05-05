@@ -118,10 +118,6 @@
   <body>
     <div class="background">
       <div class="top">
-        <a href="/adminbtn" class = "logout-button">
-          <div class="logout-text">
-            Admin Portal
-          </div> 
         <a href="/logout" class = "logout-button">
           <div class="logout-text">
             Log Out
@@ -162,6 +158,7 @@
       let customer_list = JSON.parse('<%- customer_list%>');
       let sanctioned_quotes = JSON.parse('<%- sanctioned_quotes%>');
       let finalized_quotes = JSON.parse('<%- finalized_quotes%>');
+      let user_info = JSON.parse('<%- user_info %>');
 
       let finalized_table = `<th>Date</th>
         <th>Customer</th>
@@ -172,6 +169,21 @@
           <th>Customer</th>
           <th>Sales Associate</th>
           <th></th>`;
+
+      if (user_info[0].admin === 1)
+      {
+        document.querySelector('.top').innerHTML = `
+        <a href="/adminbtn" class = "logout-button">
+          <div class="logout-text">
+            Admin Portal
+          </div> 
+        </a>
+        <a href="/logout" class = "logout-button">
+          <div class="logout-text">
+            Log Out
+          </div>
+        </a>`
+      };
 
       // loop through finalized_quotes to append table string with values
       for (i = 0; i < finalized_quotes.length; i++)

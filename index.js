@@ -198,18 +198,18 @@ router.get('/view-quote', (req, res) => {
     if(err) res.send(err, data1);
     else {
 
-      quote_info = JSON.stringify(data1);
+      quote_info = (JSON.stringify(data1)).replaceAll("'", "\\'");
       conn.query(`SELECT * FROM line_items WHERE quote_id = "${view_quote_id}"`, (err, data2) => {
 
         if(err) res.send(err, data2);
         else {
-          line_items_info = JSON.stringify(data2);
+          line_items_info = (JSON.stringify(data2)).replaceAll("'", "\\'");
           legacy_conn.query(`SELECT * FROM customers WHERE id = "${data1[0].customer_id}"`,
           (err, data3) => {
 
             if(err) res.send(err, data3);
             else {
-              customer_info = JSON.stringify(data3);
+              customer_info = (JSON.stringify(data3)).replaceAll("'", "\\'");
 
               console.log('Pulling quote information to display...')
               
@@ -578,14 +578,22 @@ router.get('/office-portal', (req, res) => {
       conn.query(`SELECT * FROM quotes WHERE finalized=1 and sanctioned=1 and ordered='0'`, (err, sanctioned_quotes) => {
         if(err) throw err;
         else {
-          let finalized_quotes_string = JSON.stringify(finalized_quotes);
-          let sanctioned_quotes_string = JSON.stringify(sanctioned_quotes);
+          let finalized_quotes_string = (JSON.stringify(finalized_quotes)).replaceAll("'", "\\'");
+          let sanctioned_quotes_string = (JSON.stringify(sanctioned_quotes)).replaceAll("'", "\\'");
+          let user_id = req.session.user_id;
 
-          res.render('pages/office-portal', {
-            customer_list: customer_list,
-            finalized_quotes: finalized_quotes_string,
-            sanctioned_quotes: sanctioned_quotes_string
-      })}
+          conn.query(`SELECT * from office_workers WHERE id = "${req.session.user_id}"`, (err, info) => {
+            if(err) throw err;
+            else {
+              let user_info = (JSON.stringify(info)).replaceAll("'", "\\'");
+              res.render('pages/office-portal', {
+                customer_list: customer_list,
+                finalized_quotes: finalized_quotes_string,
+                sanctioned_quotes: sanctioned_quotes_string,
+                user_info: user_info
+          })
+            }
+          })}
     }
   )}
 })})
@@ -615,19 +623,19 @@ router.get('/view-finalized-quote', (req, res) => {
     res.redirect("/office-portal")
     return
   }
-  console.log(view_quote_id);
+
   conn.query(`SELECT * FROM quotes WHERE quote_id = "${view_quote_id}";`, (err, view_quote) => {
     if(err) throw err;
-    let view_quote_string = JSON.stringify(view_quote);
+    let view_quote_string = (JSON.stringify(view_quote)).replaceAll("'", "\\'");
     console.log(view_quote);
     legacy_conn.query(`SELECT * FROM customers WHERE id = "${view_quote[0].customer_id}";`, (err, view_customer) => {
       if(err) throw err;
 
-      let view_customer_string = JSON.stringify(view_customer);
+      let view_customer_string = (JSON.stringify(view_customer)).replaceAll("'", "\\'");
       conn.query(`SELECT * FROM line_items WHERE quote_id = "${view_quote_id}";`, (err, view_line_items) => {
         if(err) throw err;
 
-        let view_line_items_string = JSON.stringify(view_line_items);
+        let view_line_items_string = (JSON.stringify(view_line_items)).replaceAll("'", "\\'");
 
         res.render('pages/view-finalized-quote', {
           quote_id: view_quote_id,
@@ -648,15 +656,15 @@ router.get('/view-sanctioned-quote', (req, res) => {
 
   conn.query(`SELECT * FROM quotes WHERE quote_id = "${view_quote_id}";`, (err, view_quote) => {
     if(err) throw err;
-    let view_quote_string = JSON.stringify(view_quote);
+    let view_quote_string = (JSON.stringify(view_quote)).replaceAll("'", "\\'");
     legacy_conn.query(`SELECT * FROM customers WHERE id = "${view_quote[0].customer_id}";`, (err, view_customer) => {
       if(err) throw err;
 
-      let view_customer_string = JSON.stringify(view_customer);
+      let view_customer_string = JSON.stringify((view_customer)).replaceAll("'", "\\'");
       conn.query(`SELECT * FROM line_items WHERE quote_id = "${view_quote_id}";`, (err, view_line_items) => {
         if(err) throw err;
 
-        let view_line_items_string = JSON.stringify(view_line_items);
+        let view_line_items_string = (JSON.stringify(view_line_items)).replaceAll("'", "\\'");
 
         res.render('pages/view-sanctioned-quote', {
           quote_id: view_quote_id,
