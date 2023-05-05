@@ -24,6 +24,7 @@
         height: 100%;
         background-image: linear-gradient(to bottom, rgb(17, 139, 232) , rgba(254, 251, 251, 0.755));
         flex-direction: column;
+        padding: 8px;
       }
 
       .logo
@@ -169,13 +170,13 @@
           <button type="submit" name="addLineItem" value= style="width:75px;">Add Line Item</button>
         </div>
       </form>
-      </div>
       <div class="finalize-text">Click the button below to finalize the quote.</div>
       <div>Warning: Once a quote has been finalized, you will no longer be able make edits.</div>
       <form action="/finalize-quote" method="POST">
         <div class="finalize-button"></div>
       </form>
     </div>
+      </div>
     <script>
       let quote_info = JSON.parse('<%- quote_info%>');
       let line_items_info = JSON.parse('<%- line_items_info%>');

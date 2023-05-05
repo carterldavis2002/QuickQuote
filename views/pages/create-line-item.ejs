@@ -24,6 +24,7 @@
         height: 100%;
         background-image: linear-gradient(to bottom, rgb(17, 139, 232) , rgba(254, 251, 251, 0.755));
         flex-direction: column;
+        padding: 8px;
       }
 
       .logo
@@ -176,7 +177,7 @@
 
       document.querySelector('.customer-name').innerHTML = `<b>${customer_name}</b>`;
 
-      document.querySelector('.add-form').innerHTML += `<input type="hidden" name="quote_id" value="${quote_id}">`
+      document.querySelector('.add-form').innerHTML += `<input type="hidden" name="quote_id" value="${quote_id}">`;
     </script>
   </body>
 </html>
