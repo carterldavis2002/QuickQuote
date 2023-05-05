@@ -6,6 +6,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,500;0,600;0,700;1,100;1,200&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="public/styles/button.css">
     
     <style>
       body
@@ -135,7 +137,6 @@
       
       .price-box
       {
-        height: 18px;
         width: 60px
       }
     </style>
@@ -161,14 +162,13 @@
       <div class="input-text">Description</div>
       <div><textarea class="description-box" type="text" width="200px" height="300px" name="description"></textarea></div>
       <div class="input-text">Note(s)</div>
-      <div><textarea class="note-box" type="text" name="hidden_note"></textarea></div>
-      <div class="input-text">Price: $<textarea class="price-box" input type="text" name="price"></textarea></div>
+      <div><textarea class="note-box" type="text" name="hidden_note"></textarea></div><div class="input-text" id="previous-price">Previous Price: $</div>
+      <div class="input-text">Updated Price: $<input type="number" step=".01" min="0.01" class="price-box" input type="text" name="price"></div>
       <button class="update" type="submit" name="update" value="update">Update</button>
       </form>
     </div>
     <script>
       let line_item = JSON.parse('<%- line_item%>');
-      console.log(line_item);
       
       let customer_info = JSON.parse('<%- customer_info%>');
       console.log(customer_info);
@@ -179,7 +179,7 @@
 
       document.querySelector('.note-box').innerHTML = `${line_item[0].secret_note}`;
 
-      document.querySelector('.price-box').innerHTML = `${line_item[0].price}`;
+      document.getElementById('previous-price').innerHTML += `${(Number(line_item[0].price)).toFixed(2)}`;
 
       document.querySelector('.line_id').innerHTML = `<input type="hidden" name="line_id" value="${line_item[0].line_id}">
       <input type="hidden" name="quote_id" value="${line_item[0].quote_id}">`;
