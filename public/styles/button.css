@@ -49,6 +49,8 @@ button:hover, .input-button:hover
   background-color: rgba(17, 139, 232, 0.355);
   box-shadow: -2px 2px 8px rgba(48, 40, 40, 0.789) ;
   color: white;
+  border: solid, 0.5px;
+  border-color:rgba(51, 47, 47, 0.604)
 }
 
 .logout-button:active {
