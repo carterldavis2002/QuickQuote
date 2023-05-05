@@ -112,6 +112,11 @@
       {
         width: 300px;
       }
+
+      .create
+      {
+        margin-top: -9px;
+      }
     </style>
   </head>
   <body>
@@ -133,7 +138,7 @@
       <form action="/create-quote" method = "POST">
         <select name="customer" id="customers" style="width:250px;"></select>
         <div><input type="text" name="customer_email" placeholder="Customer email"></div>
-        <div><br><input type=submit name="Create" class="input-button" value="Create"></div>
+        <div><br><input type=submit name="Create" class="input-button create" value="Create"></div>
       </form>
       <div class="existing-quotes-text"><b>Existing Quotes</b></div>
       <div class="existing-quotes">

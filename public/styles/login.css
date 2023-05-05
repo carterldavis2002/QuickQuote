@@ -27,7 +27,6 @@
     display: flex;
     margin-top: 20px;
     cursor: pointer;
-    background-color:rgb(17, 139, 232);
     width: 80px;
     height: 40px;
     border-radius: 5px;
@@ -39,7 +38,7 @@
 
 .login-button:hover
 {
-    background-color:rgb(3, 73, 126);
+    color: white;
 }
 
 .login-button:active
