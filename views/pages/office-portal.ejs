@@ -7,6 +7,8 @@
     
     <link rel="stylesheet" href="public/styles/index-options.css">
 
+    <link rel="stylesheet" href="public/styles/button.css">
+
     <style>
       body
       {
@@ -107,12 +109,9 @@
         height: 100%;
       }
 
-      .styled-table
+      .bottom
       {
-        border-collapse: collapse;
-        margin: 5px 0;
-        min-width: 400px;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        padding-bottom: 10px;
       }
     </style>
   </head>
@@ -137,24 +136,27 @@
         <b>Finalized Quotes</b>
       </div>
       <form action="/viewfinquote" method = "POST">
-      <table class="styled-table" id="finquotes" border="1" cellpadding="20" width = "80%">
-        <th>Date</th>
-        <th>Customer</th>
-        <th>Sales Associate</th>
-        <th>Action</th>
+      <table class="styled-table" id="finquotes" border="1" cellpadding="20" width = "70%">
+        <thead>
+          <th style="width: 25%;">Date</th>
+          <th style="width: 35%;">Customer</th>
+          <th style="width: 30%;">Sales Associate</th>
+          <th style="width: 10%;">Action</th>
+        </thead>
       </table>
       </form>
       <div class="sanctioned-text">
         <b>Sanctioned Quotes</b>
       </div>
       <form action="/viewsancquote" method = "POST">
-        <table class="styled-table" id="sancquotes" border="1" cellpadding="20" width = "80%">
-          <th>Date</th>
-          <th>Customer</th>
-          <th>Sales Associate</th>
-          <th></th>
+        <table class="styled-table" id="sancquotes" border="1" cellpadding="20" width = "70%">
+          <th style="width: 25%;">Date</th>
+          <th style="width: 35%;">Customer</th>
+          <th style="width: 30%;">Sales Associate</th>
+          <th style="width: 10%;"></th>
         </table>
         </form>
+        <div class="bottom"></div>
     </div>
     <script>
       let customer_list = JSON.parse('<%- customer_list%>');
@@ -186,11 +188,11 @@
             let date = `${month}/${day}, ${year}`;
             
             //append quote string to form table
-            finalized_table += `
+            finalized_table += `<tbody>
             <tr><td>${date}</td>
             <td>${customer}</td>
             <td>${finalized_quotes[i].sa_id}</td>
-            <td><button class="viewQuote" type="submit" name="quote_id" value="${finalized_quotes[i].quote_id}">View Quote</button></td></tr>`;
+            <td><button class="viewQuote" type="submit" name="quote_id" value="${finalized_quotes[i].quote_id}">View</button></td></tr></tbody>`;
           }
         }
       }
@@ -214,7 +216,7 @@
             <tr><td>${date}</td>
             <td>${customer}</td>
             <td>${sanctioned_quotes[i].sa_id}</td>
-            <td><button class="viewQuote" type="submit" name="quote_id" value="${sanctioned_quotes[i].quote_id}">View Quote</button></td></tr>`;
+            <td><button class="viewQuote" type="submit" name="quote_id" value="${sanctioned_quotes[i].quote_id}">View</button></td></tr>`;
           }
         }
       }

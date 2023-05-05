@@ -2,6 +2,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,500;0,600;0,700;1,100;1,200&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="public/styles/button.css">
     
     <style>
       body
@@ -18,6 +20,7 @@
         height: 100%;
         background-image: linear-gradient(to bottom, rgb(17, 139, 232) , rgba(254, 251, 251, 0.755));
         flex-direction: column;
+        padding: 8px;
       }
 
       .logo
@@ -132,6 +135,11 @@
         height: 18px;
         width: 60px
       }
+
+      .bottom
+      {
+        padding-bottom: 10px;
+      }
     </style>
 </head>
 <body>
@@ -167,11 +175,19 @@
             <div class="plain-text">Price Breakdown</div>
         </div>
         <div class="line-items-text">Line Items</div>
-        <table id="line_items" border=2 cellpadding="20" width="100%">
+        <table class ="styled-table" id="line_items" border=2 cellpadding="20" width="100%">
         </table>
+        <div class="bottom"></div>
     </div>
 </body>
 <script>
+
+    let initial_total_price = (Number('<%= quote_info[0].initial_total_price %>')).toFixed(2);
+    let discount = (Number('<%= quote_info[0].discount %>')).toFixed(2);
+    let final_total_price = (Number('<%= quote_info[0].final_total_price %>')).toFixed(2);
+    let additional_discount = (Number('<%= quote_info[0].additional_discount %>')).toFixed(2);
+    let order_price = (Number('<%= quote_info[0].order_price %>')).toFixed(2);
+
     document.querySelector('.customer-name').innerHTML = `<b>${'<%= customer_info[0].name %>'}</b>`;
 
     let date = new Date('<%= quote_info[0].date_time %>').toLocaleDateString()
@@ -190,27 +206,23 @@
 
     document.querySelector(".contact_email").innerHTML = `Email: <%= quote_info[0].customer_email %>`;
 
-    let initial_total_price = (Number('<%= quote_info[0].initial_total_price %>')).toFixed(2);
-    let discount = (Number('<%= quote_info[0].discount %>')).toFixed(2);
-    let final_total_price = (Number('<%= quote_info[0].final_total_price %>')).toFixed(2);
-    let additional_discount = (Number('<%= quote_info[0].additional_discount %>')).toFixed(2);
-    let order_price = (Number('<%= quote_info[0].order_price %>')).toFixed(2)
+    let price_breakdown;
 
-    let price_breakdown = `<div class="plain-text"><u>Price Breakdown</u></div>`
-
-    if('<%= quote_info[0].sanctioned %>' == '1') {
-        price_breakdown += `
-        <div class="price">Initial Quote Price: $${initial_total_price}</div>
+    if (('<%= quote_info[0].sanctioned %>') == 0) {
+      price_breakdown = `<div class="plain-text"><u>Price Breakdown</u></div>
+        <div class="price">Initial Total Price: $${initial_total_price}</div>
         <div class="price">Discount: $${discount}</div>
-        <div class="price">Final Quote Price: $${final_total_price}</div>
-        <div class="price">Additional Discount: $${additional_discount}</div>
-        <div class="price">Order Price: <b>$${order_price}</b></div>`
+        <div class="price">Final Total Price: <b>$${final_total_price}</b></div>`
     }
     else {
-      price_breakdown += `
+      price_breakdown = `<div class="plain-text"><u>Price Breakdown</u></div>
       <div class="price">Initial Total Price: $${initial_total_price}</div>
       <div class="price">Discount: $${discount}</div>
-      <div class="price">Final Total Price: <b>$${final_total_price}</b></div>`
+      <div class="price">Final Quote Price: $${final_total_price}<div>
+        <div class="price">Additional Discount: $${additional_discount}</div>
+        <div class="price">Order Price: <b>$${order_price}</b></div>
+      </div>`;
+
     }
 
     document.querySelector('.price-breakdown').innerHTML = price_breakdown;

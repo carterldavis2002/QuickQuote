@@ -5,6 +5,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,500;0,600;0,700;1,100;1,200&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="public/styles/button.css">
     
     <style>
       body
@@ -137,12 +139,9 @@
         width: 60px
       }
 
-      .styled-table
+      .bottom
       {
-        border-collapse: collapse;
-        margin: 5px 0;
-        min-width: 400px;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        padding-bottom: 10px;
       }
     </style>
   </head>
@@ -189,10 +188,9 @@
       </form>
         <div class="finalize-text">Click the button below to send the quote to order.</div>
         <div>Warning: Once a quote has been sent to order, it can no longer be edited.</div>
-        <form action="/sanction-quote" method="POST">
           <div class="sanction-button"></div>
-        </form>
         </div>
+        <div class="bottom"></div>
       </div>
     <script>
       let line_items = JSON.parse('<%- line_items%>');
@@ -224,7 +222,7 @@
       <div class="price">Final Quote Price: $${final_total_price}<div>
         <div class="price">Additional Discount: $${additional_discount}</div>
         <div class="price">Order Price: <b>$${order_price}</b></div>
-        <input type="button" id="edit-discount-button" value="Edit Discount" name="Edit Discount">
+        <input type="button" id="edit-discount-button" class="input-button" value="Edit Discount" name="Edit Discount">
       </div>`;
 
       let edit_discount_text = 
