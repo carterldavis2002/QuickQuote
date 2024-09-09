@@ -198,7 +198,7 @@
             let year = finalized_quotes[i].date_time.slice(0, 4);
             let month = finalized_quotes[i].date_time.slice(5, 7);
             let day = finalized_quotes[i].date_time.slice(8, 10);
-            let date = `${month}/${day}, ${year}`;
+            let date = `${month}/${day}/${year}`;
             
             //append quote string to form table
             finalized_table += `<tbody>
@@ -222,7 +222,7 @@
             let year = sanctioned_quotes[i].date_time.slice(0, 4);
             let month = sanctioned_quotes[i].date_time.slice(5, 7);
             let day = sanctioned_quotes[i].date_time.slice(8, 10);
-            let date = `${month}/${day}, ${year}`;
+            let date = `${month}/${day}/${year}`;
             
             //append quote string to form table
             sanctioned_table += `
