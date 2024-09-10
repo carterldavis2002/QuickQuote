@@ -1,6 +1,6 @@
 # QuickQuote
 
-Welcome to QuickQuote! This project was developed as part of a group assignment for our Introduction to Software Engineering course. We were given a problem statement and tasked with designing and developing a solution.
+Welcome to QuickQuote! This project was developed as part of a group assignment for our Introduction to Software Engineering course starting in the spring of 2023. We were given a problem statement and tasked with designing and developing a solution.
 
 ## Table Of Contents
 - [General Information](#general-information)
@@ -8,6 +8,7 @@ Welcome to QuickQuote! This project was developed as part of a group assignment 
 - [Features](#features)
 - [Launching the Application](#launching-the-application)
 - [Project Problem Statement](#problem-statement)
+- [Implementation](#implementation)
 
 ## General Information
 
@@ -222,3 +223,7 @@ The second interface to the system runs in-house at company headquarters: finali
 The third interface (also in-house) allows to convert a quote into a purchase order once the customer has indicated to go ahead with the order (the go ahead is given outside of the scope of this system, e.g. via phone or snail mail). At this time an additional final discount can be entered. The final amount is computed. The purchase order is then sent to an external processing system (details provided later) which answers with a processing date and sales commission rate for the sales associate. The commission is computed and recorded for the quote and in the sales associate's accumulated commission. An email is sent to the customer with all the purchase details, including the processing date.
 
 And lastly, there will be an administrative interface to maintain sales associate and quote information. Sales associate information contains their name, user id, password, accumulated commission, and address. The interface allows to view, add, edit and delete sales associate records. It also allows to search and view quotes based on status (finalized, sanctioned, ordered), date range, sales associate, and customer.
+
+## Implementation
+
+After being given the project details, we created a use case model to fully understand the required functionality of the application. I spent quite a bit of time doing tutorials on basic HTML, CSS, and JavaScript, as I had little experience in web development. I created an AWS account, where I was able to host an instance of the new MySQL company database, encompassing information about company employees and sales quotes. I took some time to learn `Node.js` and `Express.js` basics to implement the back end. I implemented much of the sales associate and office worker functionalities, while Carter implemented much of the administrator functionalities in addition to ensuring seamless database connection and data protection. We held weekly meetings to discuss progress and delegate tasks. Most of the project was developed using basic `JavaScript` and `HTML/CSS`, but libraries `jQuery` and `Axios` were also utilized in certain spots to make the development process easier.
