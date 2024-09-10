@@ -1,7 +1,21 @@
 # QuickQuote
-This is my final project for my Introduction to Software Engineering course. I collaborated with other students to design and build a web application to record and track sales quotes for a company providing plant repair services. Further details about the project requirements and how it was implemented can be found below.
 
-Quote System - Problem Statement
+Welcome to QuickQuote! This project was developed as part of a group assignment for our Introduction to Software Engineering course. We were given a problem statement and tasked with designing and developing a solution.
+
+## General Information
+
+QuickQuote is a dynamic full-stack CRUD web application designed to enhance efficiency for a plant repair service company. Our team developed this solution to simplify the sales quote process. QuickQuote offers tailored interfaces for sales associates, office workers, and administrators, providing each user with the tools they need for their specific tasks. The application simplifies key processes such as creating and editing quotes, managing purchase orders, and assigning commissions, ultimately improving the overall sales workflow. 
+
+## Technologies and Tools
+
+- Node.js
+- Express.js
+- JavaScript
+- MySQL
+- jQuery
+- Axios
+- HTML/CSS
+- AWS
 
 As a group of software engineers with a company that sells plant repair services via a network of sales people, you are tasked to build a new system that enables the sales force to record their quotes via the Internet. The system will maintain a database of sales associates, handle the recording of sales quotes, establish and fulfill purchase orders. The system will also assign sales commissions for the sales associate.
 

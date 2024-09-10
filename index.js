@@ -850,7 +850,7 @@ router.post('/order-quote', (req, res) => {
       'custid': req.body.custid,
       'amount': parseFloat(req.body.amount)
     }).then(result => {
-      // Note: API for placing order has since been updated, so commission is now assigned randomly (percentage between 1% and 20%)
+      // Note: API for placing order has since been updated, so commission is now assigned randomly (percentage between 5% and 20%)
       let commissionNumber = Math.floor(Math.random() * (20 - 5 + 1) + 1);
       let commission = parseFloat('0.' + commissionNumber) * parseFloat(req.body.amount)
       console.log(`Commission Percentage: ${commissionNumber}%`)
@@ -858,7 +858,7 @@ router.post('/order-quote', (req, res) => {
       conn.query(`UPDATE sales_assoc SET total_commission = total_commission + ${commission} WHERE id = "${req.body.associate}"`)
 
       return_page = req.body.return_page;
-      console.log(`Quote ${view_quote_id} has been ordered. Commission: ${commission}`);
+      console.log(`Quote ${view_quote_id} has been ordered. Commission: ${commission.toFixed(2)}`);
       res.redirect('/office-portal');
     })
  })
