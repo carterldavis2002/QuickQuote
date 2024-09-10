@@ -79,7 +79,60 @@ Locate the SQL script titled `quick_quote_db.sql` found inside the `database` di
    mysql -u [username] -p < database/quick_quote_db.sql
    ```
   Replace `[username]` with your MySQL username. Enter your MySQL password when prompted.
-- The script will handle creating the database and the necessary tables. You can optionally check that the database and tables have been created by logging into the MySQL server from the command line with `mysql -u [username] -p`, entering your password when prompted, and then executing the `SHOW DATABASES;` command from within the MySQL server. The `quick_quote` database should be present if successful.
+- The script will handle creating the database and the necessary tables. You can optionally check that the database and tables have been created by logging into the MySQL server from the command line with the following command: 
+
+   ```bash
+   mysql -u [username] -p
+   ```
+Enter your password when prompted and then execute the `SHOW DATABASES;` command from within the MySQL server. The `quick_quote` database should be present if successful.
+
+### 5. Configure Environment Variables
+
+Set up environment variables to connect to both the customer legacy database and the newly created `quick_quote` database with the following steps:
+
+- Within the project root directory, use the following command to create a `.env` file: `touch .env`. 
+- Use a text editor to add database information to the `.env` file:
+
+```env
+LEGACY_HOST=blitz.cs.niu.edu
+LEGACY_PORT=3306
+LEGACY_DATABASE=csci467
+LEGACY_USER=student
+LEGACY_PASSWORD=student
+
+DB_HOST=localhost
+DB_PORT=3306
+DB_DATABASE=quick_quote
+DB_USER=[username]
+DB_PASSWORD=[password]
+```
+
+Replace the `DB_HOST` and `DB_PORT` variables with your MySQL server's host name and password. If hosted locally, these variables are generally `localhost` and `3306`. Replace `[username]` and `[password]` with your MySQL username and password.
+
+- Save the `.env` file.
+
+### 6. Run the Application
+
+Start the server by running `npm start` from within the project root directory. Open your web browser and navigate to `http://localhost:3000`. You can alter the port number from the very bottom of the `index.js` file if desired.
+
+### 7. Setting Up And Using Instance Data
+
+Upon application launch, the company database will be populated with a handful of sales associates, office workers, sales quotes, and an administrator. 
+
+#### Sales Associates
+
+You can access the `On Site` interface for sales associates using any of the following credentials:
+
+By default, the application will reset the instance data for the company database with each new application launch. This includes sales associates, office workers, an administrator, and a few sales quotes. It's good practice to do this for at least the first launch, but if you don't want the database reset with each subsequent launch, you can alter the `index.js` file in the root directory. To do so: 
+
+- Navigate to ~line 54 in the `index.js` file. You'll see the following line of code:
+
+```javascript
+const reset_instance_data = true;
+```
+
+- Change the `reset_instance_data` variable from `true` to `false`.
+- Save the `index.js` file before restarting the application.
 
 ## Problem Statement
 As a group of software engineers with a company that sells plant repair services via a network of sales people, you are tasked to build a new system that enables the sales force to record their quotes via the Internet. The system will maintain a database of sales associates, handle the recording of sales quotes, establish and fulfill purchase orders. The system will also assign sales commissions for the sales associate.
