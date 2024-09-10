@@ -61,11 +61,15 @@ Before you start, ensure you have the following installed on your local machine:
 
 Download or clone the application repository to your local machine. You can do this via Git or downloading a .zip file of the project. You can clone the repository using `git clone https://github.com/bdappelhans/QuickQuote.git`.
 
+   ```bash
+   cd path/to/your/project
+   ```
+
 ### 3. Install Dependencies
 
 Navigate to the project directory and install the required dependencies in the terminal using `npm install`.
 
-### 4. Set up Company Database
+### 4. Set Up Company Database
 
 Locate the SQL script titled `quick_quote_db.sql` found inside the `database` directory. You can execute the script inside of MySQL Workbench. Alternatively, you can execute the script from the command line with the following steps:
 - Ensure your command line interface is open and navigated to the project directory.
