@@ -212,7 +212,7 @@
       let year = quote_info[0].date_time.slice(0, 4);
       let month = quote_info[0].date_time.slice(5, 7);
       let day = quote_info[0].date_time.slice(8, 10);
-      let date = `${month}/${day}, ${year}`;
+      let date = `${month}/${day}/${year}`;
 
       document.querySelector('.date').innerHTML = `Generated on ${date} by ${quote_info[0].sa_id}`;
 

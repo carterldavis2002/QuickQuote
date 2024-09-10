@@ -19,6 +19,8 @@ QuickQuote is a dynamic full-stack CRUD web application designed to enhance effi
 
 ## Features
 
+![QuickQuote Home Page](./public/images/screenshots/home_screen.png)
+
 QuickQuote consists of interfaces for three separate roles within the plant repair company: sales associates, office workers, and administrators.
 
 ### Sales Associate
@@ -43,7 +45,7 @@ Upon successful login to their respective portal, an office worker can:
 
 ### Administrator
 
-Administrators access the office worker portal via their credentials. They can access all of same functionalities as normal office workers, but they have access to an additional administrator interface, which encompasses the following functionalities:
+Administrators access the office worker portal via their credentials. They can access all of the same functionalities as normal office workers in addition to an administrator interface, which encompasses the following functionalities:
 - Perform CRUD operations on sales associates
 - Find quotes via a Search form that includes filters containing creation date ranges, the sales associate, the customer, and the quote status (Open, Finalized, Sanctioned, and Ordered)
 - View information for all quotes
@@ -94,6 +96,8 @@ Locate the SQL script titled `quick_quote_db.sql` found inside the `database` di
    mysql -u [username] -p
    ```
 Enter your password when prompted and then execute the `SHOW DATABASES;` command from within the MySQL server. The `quick_quote` database should be present if successful.
+
+*Note: The company database was initially hosted on AWS when this project was first completed. The database instance has since been taken down. For ease of use, the SQL script is provided to be run on your local machine, but it can also be hosted on a cloud platform like AWS.*
 
 ### 5. Configure Environment Variables
 
