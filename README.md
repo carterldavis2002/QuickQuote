@@ -20,7 +20,7 @@ QuickQuote is a dynamic full-stack CRUD web application designed to enhance effi
 ## Features
 
 ![QuickQuote Home Page](./public/images/screenshots/home_screen.png)
-<small>Home Login Page</small>
+*Home Login Page*
 
 QuickQuote consists of interfaces for three separate roles within the plant repair company: sales associates, office workers, and administrators.
 
@@ -33,10 +33,10 @@ Upon successful login to their respective portal, a sales associate can:
 - Finalize sales quotes
 
 ![On Site Home Page](./public/images/screenshots/sa_portal.png)
-<small>On Site Home Page</small>
+*On Site Home Page*
 
 ![On Site Home Page](./public/images/screenshots/sa_view_quote.png)
-<small>On Site Open Quote View</small>
+*On Site Open Quote View*
 
 ### Office Worker
 
@@ -48,13 +48,13 @@ Upon successful login to their respective portal, an office worker can:
 - Add an additional final discount to a sanctioned quote, used to compute a final order price
 - Convert a sanctioned quote into a purchase order upon customer confirmation, which is then sent to an external processing system that provides an order processing date and commission rate for the sales associate
 
-*Note: Since the completion of this project, the external API endpoint provided to us for order processing has been changed. Order processing is simulated by providing a randomly assigned commission rate for the purchase order, which is added to the corresponding sales associate's total commission.*
+*Note: Since the completion of this project, the external API endpoint provided to us for order processing has been changed. Order processing is currently simulated by providing a randomly assigned commission rate, generating a total commission for the purchase order, which is then added to the corresponding sales associate's total commission.*
 
 ![Office Home Page](./public/images/screenshots/office_portal.png)
-<small>Office Home Page</small>
+*Office Home Page*
 
 ![View Sanctioned Quote Page](./public/images/screenshots/view_sanctioned_quote.png)
-<small>Sanctioned Quote View</small>
+*Sanctioned Quote View*
 
 ### Administrator
 
@@ -64,10 +64,10 @@ Administrators access the office worker portal via their credentials. They can a
 - View information for all quotes
 
 ![Admin Portal](./public/images/screenshots/admin_sa_crud.png)
-<small>Admin Portal</small>
+*Admin Portal*
 
 ![Admin Quote Search](./public/images/screenshots/admin_quote_search.png)
-<small>Admin Quote Search Feature</small>
+*Admin Quote Search Feature*
 
 ## Launching the Application
 
