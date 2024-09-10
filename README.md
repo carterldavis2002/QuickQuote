@@ -123,6 +123,15 @@ Upon application launch, the company database will be populated with a handful o
 
 You can access the `On Site` interface for sales associates using any of the following credentials:
 
+| Username | Password |
+|----------|----------|
+| user | userPassword |
+| driley | deweyPassword |
+| gweathers | galePassword |
+| rmeeks | randyPassword |
+| scarpenter | samanthaPassword |
+| sprescott | sidneyPassword |
+
 By default, the application will reset the instance data for the company database with each new application launch. This includes sales associates, office workers, an administrator, and a few sales quotes. It's good practice to do this for at least the first launch, but if you don't want the database reset with each subsequent launch, you can alter the `index.js` file in the root directory. To do so: 
 
 - Navigate to ~line 54 in the `index.js` file. You'll see the following line of code:

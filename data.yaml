@@ -2,42 +2,42 @@ sales_assoc:
   - id: 'driley'
     first_name: 'Dewey'
     last_name: 'Riley'
-    password: 'password'
+    password: 'deweyPassword'
     total_commission: 22.50
     address: '18 Hollis Rd, San Francisco, CA'
 
   - id: 'gweathers'
     first_name: 'Gale'
     last_name: 'Weathers'
-    password: 'password'
+    password: 'galePassword'
     total_commission: 0
     address: '400 North Ave, New York, NY'
 
   - id: 'rmeeks'
     first_name: 'Randy'
     last_name: 'Meeks'
-    password: 'password'
+    password: 'randyPassword'
     total_commission: 0
     address: '244 Cherry St, Forks, WA'
 
   - id: 'scarpenter'
     first_name: 'Samantha'
     last_name: 'Carpenter'
-    password: 'password'
+    password: 'samanthaPassword'
     total_commission: 0
     address: '926 Washington Blvd, Chicago, IL'
 
   - id: 'sprescott'
     first_name: 'Sidney'
     last_name: 'Prescott'
-    password: 'password'
+    password: 'sidneyPassword'
     total_commission: 0
     address: '525 Walnut Ln, Woodsboro, CA'
 
   - id: 'user'
     first_name: 'Sales'
     last_name: 'Associate'
-    password: 'password'
+    password: 'userPassword'
     total_commission: 0
     address: '123 Elm St, DeKalb, IL'
 
@@ -45,37 +45,37 @@ office_workers:
   - id: 'admin'
     first_name: 'Administrator'
     last_name: 'Administrator'
-    password: 'password'
+    password: 'adminPassword'
     admin: 1
 
   - id: 'bloomis'
     first_name: 'Billy'
     last_name: 'Loomis'
-    password: 'password'
+    password: 'billyPassword'
     admin: 0
 
   - id: 'jroberts'
     first_name: 'Jill'
     last_name: 'Roberts'
-    password: 'password'
+    password: 'jillPassword'
     admin: 0
 
   - id: 'cbecker'
     first_name: 'Casey'
     last_name: 'Becker'
-    password: 'password'
+    password: 'caseyPassword'
     admin: 0
 
   - id: 'kreed'
     first_name: 'Kirby'
     last_name: 'Reed'
-    password: 'password'
+    password: 'kirbyPassword'
     admin: 0
 
   - id: 'rbridger'
     first_name: 'Roman'
     last_name: 'Bridger'
-    password: 'password'
+    password: 'romanPassword'
     admin: 0
 
 quotes:

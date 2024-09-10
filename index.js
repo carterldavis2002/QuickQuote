@@ -50,6 +50,7 @@ const conn = mysql.createConnection({
 const yaml = require('js-yaml');
 const fs = require('fs');
 const doc = yaml.load(fs.readFileSync('data.yaml', 'utf-8'));
+
 const reset_instance_data = true;
 
 conn.connect((err) => {
