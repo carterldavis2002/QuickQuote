@@ -59,10 +59,10 @@ Before you start, ensure you have the following installed on your local machine:
 
 ### 2. Clone the Repository
 
-Download or clone the application repository to your local machine. You can do this via Git or downloading a .zip file of the project. You can clone the repository using `git clone https://github.com/bdappelhans/QuickQuote.git`.
+Download or clone the application repository to your local machine. You can do this via Git or downloading a .zip file of the project. You can clone the repository using the following command:
 
    ```bash
-   cd path/to/your/project
+   git clone https://github.com/bdappelhans/QuickQuote.git
    ```
 
 ### 3. Install Dependencies
@@ -71,9 +71,13 @@ Navigate to the project directory and install the required dependencies in the t
 
 ### 4. Set Up Company Database
 
-Locate the SQL script titled `quick_quote_db.sql` found inside the `database` directory. You can execute the script inside of MySQL Workbench. Alternatively, you can execute the script from the command line with the following steps:
+Locate the SQL script titled `quick_quote_db.sql` found inside the `database` directory within the project. You can execute the script inside of MySQL Workbench. Alternatively, you can execute the script from the command line with the following steps:
 - Ensure your command line interface is open and navigated to the project directory.
-- Run the SQL script using the MySQL command line tool: `mysql -u [username] -p < database/quick_quote_db.sql`. Replace `[username]` with your MySQL username. Enter your MySQL password when prompted.
+- Run the SQL script using the MySQL command line tool: 
+   ```bash
+   mysql -u [username] -p < database/quick_quote_db.sql
+   ```
+  Replace `[username]` with your MySQL username. Enter your MySQL password when prompted.
 - The script will handle creating the database and the necessary tables. You can optionally check that the database and tables have been created by logging into the MySQL server from the command line with `mysql -u [username] -p`, entering your password when prompted, and then executing the `SHOW DATABASES;` command from within the MySQL server. The `quick_quote` database should be present if successful.
 
 ## Problem Statement
