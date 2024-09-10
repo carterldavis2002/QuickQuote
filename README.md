@@ -74,6 +74,7 @@ Navigate to the project directory and install the required dependencies in the t
 Locate the SQL script titled `quick_quote_db.sql` found inside the `database` directory within the project. You can execute the script inside of MySQL Workbench. Alternatively, you can execute the script from the command line with the following steps:
 - Ensure your command line interface is open and navigated to the project directory.
 - Run the SQL script using the MySQL command line tool: 
+
    ```bash
    mysql -u [username] -p < database/quick_quote_db.sql
    ```
