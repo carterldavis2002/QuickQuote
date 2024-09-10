@@ -57,6 +57,15 @@ Before you start, ensure you have the following installed on your local machine:
 - **npm**: Comes with Node.js, but you can update it via the command line if needed.
 - **MySQL**: Ensure that you have [MySQL](https://www.mysql.com/products/community/) installed an running on your local machine or a server. You can utilize [MySQL Workbench](https://www.mysql.com/products/workbench/) on your local machine to easier manage the database.
 
+#### Note on MySQL Configuration
+Before running the application, please ensure that your MySQL database is configured to use the `caching_sha2_password` authentication plugin, which is the default for MySQL 8.0. If you're using an older version of MySQL or your configuration is different, you may need to adjust your MySQL settings or user credentials.
+
+To check or update the authentication plugin for your MySQL user, you can run the following query:
+
+```sql
+ALTER USER 'your_username'@'localhost' IDENTIFIED WITH caching_sha2_password BY 'your_password';
+```
+
 ### 2. Clone the Repository
 
 Download or clone the application repository to your local machine. You can do this via Git or downloading a .zip file of the project. You can clone the repository using the following command:
@@ -113,7 +122,7 @@ Replace the `DB_HOST` and `DB_PORT` variables with your MySQL server's host name
 
 ### 6. Run the Application
 
-Start the server by running `npm start` from within the project root directory. Open your web browser and navigate to `http://localhost:3000`. You can alter the port number from the very bottom of the `index.js` file if desired.
+Start the server by running `npm start` from within the project root directory. Open your web browser and navigate to `http://localhost:3000`. You can alter the port number from the very bottom of the `index.js` file if desired. To stop running the application, press `CTRL` + `C` at the same time from the command line.
 
 ### 7. Setting Up And Using Instance Data
 
@@ -132,7 +141,29 @@ You can access the `On Site` interface for sales associates using any of the fol
 | scarpenter | samanthaPassword |
 | sprescott | sidneyPassword |
 
-By default, the application will reset the instance data for the company database with each new application launch. This includes sales associates, office workers, an administrator, and a few sales quotes. It's good practice to do this for at least the first launch, but if you don't want the database reset with each subsequent launch, you can alter the `index.js` file in the root directory. To do so: 
+#### Office Workers
+
+You can access the `Office` interface for office workers using any of the following credentials:
+
+| Username | Password |
+|----------|----------|
+| bloomis | billyPassword |
+| cbecker | caseyPassword |
+| jroberts | jillPassword |
+| kreed | kirbyPassword |
+| rbridger | romanPassword |
+
+#### Administrator
+
+You can access the `Office` interface with access to the `Admin Portal` by using the following credentials:
+
+| Username | Password |
+|----------|----------|
+| admin | adminPassword |
+
+#### Resetting Instance Data
+
+By default, the application will reset the instance data for the company database with each new application launch. Any additions, deletions, or updates to users and sales quotes will be wiped form the database when the applicaiton is restarted. It's good practice to do this for at least the first launch, but if you don't want the database reset with each subsequent launch, you can alter the `index.js` file in the root directory. To do so: 
 
 - Navigate to ~line 54 in the `index.js` file. You'll see the following line of code:
 
@@ -142,6 +173,11 @@ const reset_instance_data = true;
 
 - Change the `reset_instance_data` variable from `true` to `false`.
 - Save the `index.js` file before restarting the application.
+
+### Additional Notes
+
+- **Troubleshooting**: If you encounter any issues, check the project documentation or log files for errors.
+- **Updates**: Within my spare time, I might be making occasional changes to the project repository for performance enhancement, fixes, and added functionality.
 
 ## Problem Statement
 As a group of software engineers with a company that sells plant repair services via a network of sales people, you are tasked to build a new system that enables the sales force to record their quotes via the Internet. The system will maintain a database of sales associates, handle the recording of sales quotes, establish and fulfill purchase orders. The system will also assign sales commissions for the sales associate.
