@@ -143,7 +143,7 @@
       <div class="existing-quotes-text"><b>Existing Quotes</b></div>
       <div class="existing-quotes">
         <form action="/viewquote" method = "POST">
-        <table class="styled-table" id="quotes" border="1" cellpadding="20" width = "650px">
+        <table class="styled-table" id="quotes" border="1" cellpadding="20" width = "700px">
           <th>Date</th>
           <th>Customer</th>
           <th></th>
@@ -188,7 +188,7 @@
             //let day = quote_object[i].date_time.slice(8, 10);
             //append quote string to form table
             quote+= `
-              <tr><td>${month}/${day}, ${year}</td>
+              <tr><td>${month}/${day}/${year}</td>
             <td>${customer_object[j].name}</td>
             <td><button class="viewQuote" type="submit" name="viewQuote" value="${quote_object[i].quote_id}">View</button></td></tr>`;
             console.log(quote_object[i].quote_id);

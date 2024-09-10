@@ -1,27 +1,25 @@
-const express = require("express")
-const app = express()
-const router = express.Router()
+const express = require("express");
+const app = express();
+const router = express.Router();
 
-require('dotenv').config()
+require('dotenv').config();
 
-const path = require("path")
-const engines = require("consolidate")
+const path = require("path");
+const engines = require("consolidate");
 
-var bodyParser = require('body-parser')
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(bodyParser.json())
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
-require("dotenv").config();
-
-const mysql = require("mysql");
+const mysql = require("mysql2"); // Update to use mysql2
 
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 
 app.use(session({
-  secret : '467project',
-  resave : true,
-  saveUninitialized : true
+  secret: '467project',
+  resave: true,
+  saveUninitialized: true
 }));
 
 // Create legacy DB connection
@@ -31,47 +29,115 @@ const legacy_conn = mysql.createConnection({
   database: process.env.LEGACY_DATABASE,
   user: process.env.LEGACY_USER,
   password: process.env.LEGACY_PASSWORD
-})
+});
 
 legacy_conn.connect((err) => {
-  if(err) throw err;
+  if (err) throw err;
   else {
-  console.log('Legacy Database connected...');
-}})
+    console.log('Legacy Database connected...');
+  }
+});
 
 // Create new DB connection
 const conn = mysql.createConnection({
-  host: process.env.HOST,
-  port: process.env.PORT,
-  database: process.env.DATABASE,
-  user: process.env.USER,
-  password: process.env.PASSWORD
-})
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  database: process.env.DB_DATABASE,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD
+});
 
-const yaml = require('js-yaml')
-const fs = require('fs')
-const doc = yaml.load(fs.readFileSync('data.yaml', 'utf-8'))
-const reset_instance_data = false;
+const yaml = require('js-yaml');
+const fs = require('fs');
+const doc = yaml.load(fs.readFileSync('data.yaml', 'utf-8'));
+
+const reset_instance_data = true;
 
 conn.connect((err) => {
-  if(err) throw err;
-  else {
-    console.log('New Database connected...');
-    if(reset_instance_data) {
-      conn.query("DELETE FROM quotes")
-      conn.query("DELETE FROM sales_assoc")
+  if (err) throw err;
+  console.log('Database connected...');
 
-      for (let k in doc) {
-        for (let v of doc[k]) {
-          if (k == "sales_assoc")
-            conn.query(`INSERT INTO ${k} VALUES ("${v.id}", "${v.first_name}", "${v.last_name}", "${v.password}", ${v.total_commission}, "${v.address}")`)
-          else if (k == "quotes")
-            conn.query(`INSERT INTO ${k} VALUES (${v.quote_id}, ${v.customer_id}, "${v.sa_id}", ${v.date_time}, "${v.customer_email}", ${v.initial_total_price}, ${v.discount}, ${v.final_total_price}, ${v.finalized}, ${v.sanctioned}, ${v.commission_rate}, ${v.commission})`)
+  // Reset instance data if set to true
+  if (reset_instance_data) {
+    console.log("Resetting instance data...")
+    // Use parameterized queries to prevent SQL injection
+    conn.query("DELETE FROM line_items", (err) => {
+      if (err) console.error('Error deleting from line_items:', err);
+    });
+    conn.query("DELETE FROM quotes", (err) => {
+      if (err) console.error('Error deleting from quotes:', err);
+    });
+    conn.query("DELETE FROM sales_assoc", (err) => {
+      if (err) console.error('Error deleting from sales_assoc:', err);
+    });
+    conn.query("DELETE FROM office_workers", (err) => {
+      if (err) console.error('Error deleting from office_workers:', err);
+    });
+
+    // Insert sales_assoc
+    for (let v of doc['sales_assoc']) {
+      conn.query(`INSERT INTO sales_assoc (id, first_name, last_name, password, total_commission, address) VALUES (?, ?, ?, ?, ?, ?)`, 
+        [v.id, v.first_name, v.last_name, v.password, v.total_commission, v.address], 
+        (err) => {
+          if (err) console.error('Error inserting data into sales_assoc:', err);
         }
-      }
+      );
+    }
+
+    // Insert quotes
+    for (let v of doc['quotes']) {
+      const query = `
+      INSERT INTO quotes 
+        (quote_id, customer_id, sa_id, date_time, customer_email, initial_total_price, discount, final_total_price, finalized, sanctioned, commission_rate, commission, ordered, additional_discount, order_price)
+      VALUES 
+        (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+    
+      conn.query(query, [
+        v.quote_id,
+        v.customer_id,
+        v.sa_id,
+        v.date_time,  // Use the provided date_time
+        v.customer_email,
+        v.initial_total_price,
+        v.discount,
+        v.final_total_price,
+        v.finalized,
+        v.sanctioned,
+        v.commission_rate,
+        v.commission,
+        v.ordered,
+        v.additional_discount,
+        v.order_price
+      ], (err) => {
+        if (err) {
+          console.error('Error inserting data into quotes:', err);
+        }
+      });
+    }
+
+    // Insert office_workers
+    for (let v of doc['office_workers']) {
+      conn.query(`INSERT INTO office_workers (id, first_name, last_name, password, admin) VALUES (?, ?, ?, ?, ?)`, 
+        [v.id, v.first_name, v.last_name, v.password, v.admin], 
+        (err) => {
+          if (err) console.error('Error inserting data into office_workers:', err);
+        }
+      );
+    }
+
+    // Insert line_items after quotes are inserted
+    for (let v of doc['line_items']) {
+      conn.query(`INSERT INTO line_items (line_id, description, price, quote_id, secret_note) VALUES (?, ?, ?, ?, ?)`, 
+        [v.line_id, v.description, v.price, v.quote_id, v.secret_note], 
+        (err) => {
+          if (err) console.error('Error inserting data into line_items:', err);
+        }
+      );
     }
   }
-})
+});
+
 
 app.set('views', path.resolve(__dirname, 'views'));
 app.engine('html', engines.mustache)
@@ -711,13 +777,6 @@ router.post('/update-discount', (req, res) => {
   let discount_amount = Number(req.body.discount_amount);
   let initial_total_price = Number(req.body.initial_total_price);
 
-  console.log(`Quote ID: ${view_quote_id}, Return Page: ${return_page}, discount type: ${discount_type}, discount amount: ${discount_amount}, ${initial_total_price}`)
-
-  if (!discount_amount || discount_amount === 0)
-  {
-    console.log('No input');
-  }
-
   if (discount_type === "dollars") {
   let new_final_price = initial_total_price - discount_amount;
     conn.query(`UPDATE quotes SET discount = "${discount_amount}", final_total_price = "${new_final_price}" WHERE quote_id = "${view_quote_id}";`, (err) => {
@@ -726,7 +785,6 @@ router.post('/update-discount', (req, res) => {
   )}
   else if (discount_type === "percent") {
     let discount_amount_dollars = (discount_amount/100) * initial_total_price;
-    console.log(`Updated amount: ${discount_amount_dollars}`);
     let new_final_price = initial_total_price - discount_amount_dollars;
     conn.query(`UPDATE quotes SET discount = "${discount_amount_dollars}", final_total_price = "${new_final_price}" WHERE quote_id = "${view_quote_id}";`, (err) => {
       if(err) res.send(err);
@@ -736,20 +794,13 @@ router.post('/update-discount', (req, res) => {
   res.redirect(return_page);
 })
 
-// logic for update discount
+// logic for update additional discount
 router.post('/update-additional-discount', (req, res) => {
   view_quote_id = req.body.quote_id;
   return_page = req.body.return_page;
   let discount_type = req.body.discount_type;
   let discount_amount = Number(req.body.discount_amount);
   let final_total_price = Number(req.body.final_total_price);
-
-  console.log(`Quote ID: ${view_quote_id}, Return Page: ${return_page}, discount type: ${discount_type}, discount amount: ${discount_amount}, ${final_total_price}`)
-
-  if (!discount_amount || discount_amount === 0)
-  {
-    console.log('No input to update discount.');
-  }
 
   if (discount_type === "dollars") {
   let new_final_price = final_total_price - discount_amount;
@@ -759,7 +810,6 @@ router.post('/update-additional-discount', (req, res) => {
   )}
   else if (discount_type === "percent") {
     let discount_amount_dollars = (discount_amount/100) * final_total_price;
-    console.log(`Updated amount: ${discount_amount_dollars}`);
     let new_final_price = final_total_price - discount_amount_dollars;
     conn.query(`UPDATE quotes SET additional_discount = "${discount_amount_dollars}", order_price = "${new_final_price}" WHERE quote_id = "${view_quote_id}";`, (err) => {
       if(err) res.send(err);
@@ -778,7 +828,6 @@ router.post('/sanction-quote', (req, res) => {
     else {
 
     let final_total_price = quote_price[0].final_total_price;
-    console.log(final_total_price);
 
     conn.query(`UPDATE quotes SET sanctioned='1', order_price = "${final_total_price}" WHERE quote_id ="${view_quote_id}"`, (err) => {
       if(err) throw err;
@@ -802,12 +851,15 @@ router.post('/order-quote', (req, res) => {
       'custid': req.body.custid,
       'amount': parseFloat(req.body.amount)
     }).then(result => {
-      let commission = parseFloat('0.' + result.data.commission) * parseFloat(req.body.amount)
+      // Note: API for placing order has since been updated, so commission is now assigned randomly (percentage between 5% and 20%)
+      let commissionNumber = Math.floor(Math.random() * (20 - 5 + 1) + 1);
+      let commission = parseFloat('0.' + commissionNumber) * parseFloat(req.body.amount)
+      console.log(`Commission Percentage: ${commissionNumber}%`)
       conn.query(`UPDATE quotes SET commission = ${commission} WHERE quote_id = "${req.body.quote_id}"`)
       conn.query(`UPDATE sales_assoc SET total_commission = total_commission + ${commission} WHERE id = "${req.body.associate}"`)
 
       return_page = req.body.return_page;
-      console.log(`Quote ${view_quote_id} has been ordered. Commission: ${commission}`);
+      console.log(`Quote ${view_quote_id} has been ordered. Commission: ${commission.toFixed(2)}`);
       res.redirect('/office-portal');
     })
  })

@@ -2,73 +2,176 @@ sales_assoc:
   - id: 'driley'
     first_name: 'Dewey'
     last_name: 'Riley'
-    password: 'password'
-    total_commission: 0
+    password: 'deweyPassword'
+    total_commission: 22.50
     address: '18 Hollis Rd, San Francisco, CA'
+
   - id: 'gweathers'
     first_name: 'Gale'
     last_name: 'Weathers'
-    password: 'password'
+    password: 'galePassword'
     total_commission: 0
     address: '400 North Ave, New York, NY'
+
   - id: 'rmeeks'
     first_name: 'Randy'
     last_name: 'Meeks'
-    password: 'password'
+    password: 'randyPassword'
     total_commission: 0
     address: '244 Cherry St, Forks, WA'
+
   - id: 'scarpenter'
     first_name: 'Samantha'
     last_name: 'Carpenter'
-    password: 'password'
+    password: 'samanthaPassword'
     total_commission: 0
     address: '926 Washington Blvd, Chicago, IL'
+
   - id: 'sprescott'
     first_name: 'Sidney'
     last_name: 'Prescott'
-    password: 'password'
+    password: 'sidneyPassword'
     total_commission: 0
     address: '525 Walnut Ln, Woodsboro, CA'
+
   - id: 'user'
     first_name: 'Sales'
     last_name: 'Associate'
-    password: 'password'
+    password: 'userPassword'
     total_commission: 0
     address: '123 Elm St, DeKalb, IL'
+
+office_workers:
+  - id: 'admin'
+    first_name: 'Administrator'
+    last_name: 'Administrator'
+    password: 'adminPassword'
+    admin: 1
+
+  - id: 'bloomis'
+    first_name: 'Billy'
+    last_name: 'Loomis'
+    password: 'billyPassword'
+    admin: 0
+
+  - id: 'jroberts'
+    first_name: 'Jill'
+    last_name: 'Roberts'
+    password: 'jillPassword'
+    admin: 0
+
+  - id: 'cbecker'
+    first_name: 'Casey'
+    last_name: 'Becker'
+    password: 'caseyPassword'
+    admin: 0
+
+  - id: 'kreed'
+    first_name: 'Kirby'
+    last_name: 'Reed'
+    password: 'kirbyPassword'
+    admin: 0
+
+  - id: 'rbridger'
+    first_name: 'Roman'
+    last_name: 'Bridger'
+    password: 'romanPassword'
+    admin: 0
+
 quotes:
   - quote_id: 1
     customer_id: 1
-    sa_id: 'user'
-    date_time: CURDATE()
-    customer_email: 'customer@gmail.com'
-    initial_total_price: 0
-    discount: 0
-    final_total_price: 0
-    finalized: 0
-    sanctioned: 0
-    commission_rate: 0
-    commission: 0
+    sa_id: 'driley'
+    date_time: '2024-09-01 10:30:00'
+    customer_email: 'customer1@example.com'
+    initial_total_price: 500.00
+    discount: 50.00
+    final_total_price: 450.00
+    finalized: 1
+    sanctioned: 1
+    commission_rate: 5.00
+    commission: 22.50
+    ordered: 1
+    additional_discount: 0.00
+    order_price: 450.00
+
   - quote_id: 2
-    customer_id: 2
-    sa_id: 'user'
-    date_time: CURDATE()
-    customer_email: 'customer2@gmail.com'
-    initial_total_price: 0
-    discount: 0
-    final_total_price: 0
-    finalized: 0
-    sanctioned: 0
-    commission_rate: 0
-    commission: 0
-  - quote_id: 3
     customer_id: 22
-    sa_id: 'user'
-    date_time: CURDATE()
-    customer_email: 'customer3@gmail.com'
-    initial_total_price: 0
-    discount: 0
-    final_total_price: 0
-    finalized: 0
+    sa_id: 'gweathers'
+    date_time: '2024-09-02 14:45:00'
+    customer_email: 'customer2@example.com'
+    initial_total_price: 300.00
+    discount: 30.00
+    final_total_price: 270.00
+    finalized: 1
     sanctioned: 0
     commission_rate: 0
     commission: 0
+    ordered: 0
+    additional_discount: 0
+    order_price: 0
+
+  - quote_id: 3
+    customer_id: 4
+    sa_id: 'rmeeks'
+    date_time: '2024-09-03 09:15:00'
+    customer_email: 'customer3@example.com'
+    initial_total_price: 700.00
+    discount: 70.00
+    final_total_price: 630.00
+    finalized: 1
+    sanctioned: 1
+    commission_rate: 0
+    commission: 0
+    ordered: 0
+    additional_discount: 5.00
+    order_price: 625.00
+  
+line_items:
+- line_id: 1
+  description: 'Item A'
+  price: 200.00
+  quote_id: 1
+  secret_note: 'Urgent order'
+- line_id: 2
+  description: 'Item B'
+  price: 150.00
+  quote_id: 1
+  secret_note: 'Include batteries'
+- line_id: 3
+  description: 'Item C'
+  price: 50.00
+  quote_id: 1
+  secret_note: 'Ensure quality'
+
+- line_id: 4
+  description: 'Item A'
+  price: 100.00
+  quote_id: 2
+  secret_note: 'Handle with care'
+- line_id: 5
+  description: 'Item B'
+  price: 50.00
+  quote_id: 2
+  secret_note: 'High priority'
+- line_id: 6
+  description: 'Item C'
+  price: 150.00
+  quote_id: 2
+  secret_note: 'Test for compatibility'
+
+- line_id: 7
+  description: 'Item A'
+  price: 400.00
+  quote_id: 3
+  secret_note: 'Assembly required'
+- line_id: 8
+  description: 'Item B'
+  price: 150.00
+  quote_id: 3
+  secret_note: 'Ensure compatibility'
+- line_id: 9
+  description: 'Item C'
+  price: 100.00
+  quote_id: 3
+  secret_note: 'Standard design'

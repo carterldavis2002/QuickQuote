@@ -198,12 +198,12 @@
 
     let first_slash = date.indexOf('/')
     let second_slash = date.substring(first_slash + 1).indexOf('/') + first_slash + 1
-    let comma_date = date.substring(0, second_slash) + ', ' + date.substring(second_slash + 1)
+    let comma_date = date.substring(0, second_slash) + '/' + date.substring(second_slash + 1)
     
     if(comma_date.substring(0, comma_date.indexOf('/')).length == 1)
         comma_date = '0' + comma_date
 
-    if(comma_date.substring(comma_date.indexOf('/') + 1, comma_date.indexOf(',')).length == 1)
+    if(comma_date.substring(comma_date.indexOf('/') + 1, comma_date.indexOf('/')).length == 1)
         comma_date = comma_date.substring(0, comma_date.indexOf('/') + 1) + '0' + comma_date.substring(comma_date.indexOf('/') + 1)
 
     document.querySelector('.date').innerHTML = `Generated on ${comma_date} by <%= quote_info[0].sa_id %>`;

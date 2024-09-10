@@ -23,6 +23,7 @@
       display: flex;
       flex-direction: row;
       height: 100%;
+      width: 100%;
       background-image: linear-gradient(to bottom, rgb(17, 139, 232) , rgba(254, 251, 251, 0.755));
       flex-direction: column;
       padding: 8px;
@@ -270,22 +271,29 @@
         if(e.target.innerText == 'Edit') {
             $(`#${editRecord.id} .delete`).prop("disabled", true)
             e.target.innerText = "Update"
-
+            console.log("Edit associate form populating...")
             let j = 0
             for(let i of $(`#${editRecord.id}`).children()) {
                 j++
 
                 if(j < 6) {
-                    let input = document.createElement('input')
-                    input.setAttribute('type', 'text')
-                    input.setAttribute('value', i.innerText)
-                    i.innerText = ''
-                    i.appendChild(input)
+                  let input = document.createElement('input');
+                  input.setAttribute('type', 'text');
+                  // The updated code checks if i.innerText is empty and assigns an empty string or the actual text content.
+                  input.setAttribute('value', i.innerText || '');
+                  i.innerText = '';
+                  i.appendChild(input);
                 }
                 else if(j == 6) {
                     let input = document.createElement('input')
                     input.setAttribute('type', 'number')
-                    input.setAttribute('value', i.innerText)
+                    console.log(`Commission Value for Sales Associate Update: ${i.innerText}`);
+                    if (i.innerText == "$0.00") {
+                      input.setAttribute('value', '0')
+                    } else {
+                      input.setAttribute('value', i.innerText.substring(1));
+                    }
+
                     input.setAttribute('min', '0')
                     input.setAttribute('step', '0.01')
                     i.innerText = ''
