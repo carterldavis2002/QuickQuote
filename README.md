@@ -31,6 +31,9 @@ Upon successful login to their respective portal, a sales associate can:
 - Add and edit individual line items for each quote, including a description, price, and optional hidden note
 - Finalize sales quotes
 
+![On Site Home Page](./public/images/screenshots/sa_portal.png)
+![On Site Home Page](./public/images/screenshots/sa_view_quote.png)
+
 ### Office Worker
 
 Upon successful login to their respective portal, an office worker can:
@@ -43,12 +46,19 @@ Upon successful login to their respective portal, an office worker can:
 
 *Note: Since the completion of this project, the external API endpoint provided to us for order processing has been changed. Order processing is simulated by providing a randomly assigned commission rate for the purchase order, which is added to the corresponding sales associate's total commission.*
 
+![Office Home Page](./public/images/screenshots/office_portal.png)
+![View Finalized Quote Page](./public/images/screenshots/view_finalized_quote.png)
+![View Sanctioned Quote Page](./public/images/screenshots/view_sanctioned_quote.png)
+
 ### Administrator
 
 Administrators access the office worker portal via their credentials. They can access all of the same functionalities as normal office workers in addition to an administrator interface, which encompasses the following functionalities:
 - Perform CRUD operations on sales associates
 - Find quotes via a Search form that includes filters containing creation date ranges, the sales associate, the customer, and the quote status (Open, Finalized, Sanctioned, and Ordered)
 - View information for all quotes
+
+![Admin Portal](./public/images/screenshots/admin_sa_crud.png)
+![Admin Quote Search](./public/images/screenshots/admin_quote_search.png)
 
 ## Launching the Application
 
