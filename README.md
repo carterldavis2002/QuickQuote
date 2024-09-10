@@ -48,6 +48,31 @@ Administrators access the office worker portal via their credentials. They can a
 - Find quotes via a Search form that includes filters containing creation date ranges, the sales associate, the customer, and the quote status (Open, Finalized, Sanctioned, and Ordered)
 - View information for all quotes
 
+## Launching the Application
+
+### 1. Prerequisites
+
+Before you start, ensure you have the following installed on your local machine:
+- **Node.js**: [Download and install Node.js](https://nodejs.org/en)
+- **npm**: Comes with Node.js, but you can update it via the command line if needed.
+- **MySQL**: Ensure that you have [MySQL](https://www.mysql.com/products/community/) installed an running on your local machine or a server. You can utilize [MySQL Workbench](https://www.mysql.com/products/workbench/) on your local machine to easier manage the database.
+
+### 2. Clone the Repository
+
+Download or clone the application repository to your local machine. You can do this via Git or downloading a .zip file of the project. You can clone the repository using `git clone https://github.com/bdappelhans/QuickQuote.git`.
+
+### 3. Install Dependencies
+
+Navigate to the project directory and install the required dependencies in the terminal using `npm install`.
+
+### 4. Set up Company Database
+
+Locate the SQL script titled `quick_quote_db.sql` found inside the `database` directory. You can execute the script inside of MySQL Workbench. Alternatively, you can execute the script from the command line with the following steps:
+- Ensure your command line interface is open and navigated to the project directory.
+- Run the SQL script using the MySQL command line tool: `mysql -u [username] -p < database/quick_quote_db.sql`. Replace `[username]` with your MySQL username. Enter your MySQL password when prompted.
+- The script will handle creating the database and the necessary tables. You can optionally check that the database and tables have been created by logging into the MySQL server from the command line with `mysql -u [username] -p`, entering your password when prompted, and then executing the `SHOW DATABASES;` command from within the MySQL server. The `quick_quote` database should be present if successful.
+
+## Problem Statement
 As a group of software engineers with a company that sells plant repair services via a network of sales people, you are tasked to build a new system that enables the sales force to record their quotes via the Internet. The system will maintain a database of sales associates, handle the recording of sales quotes, establish and fulfill purchase orders. The system will also assign sales commissions for the sales associate.
 
 A sales associate is presented with a custom quote tracking program which can be run anywhere on an Internet platform. After the associate logs in (s)he can enter sales quotes for customers. Quotes are entered for existing customers, their information is maintained in a company legacy database with customer name, address, and contact info (details provided later). A quote consists of multiple line items. Each line item has a free form description and a price. The associate can also attach secret notes of free form text. The quote is entered into a new quote database. The associate also attaches a customer e-mail address to the quote, which is used as e-mail destination for communication as the quote is processed. The associate can edit quotes until (s)he finalizes the quote.

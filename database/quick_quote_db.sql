@@ -1,3 +1,17 @@
+-- Drop existing database and schema if they exist
+DROP SCHEMA IF EXISTS `quick_quote`;
+CREATE SCHEMA `quick_quote`;
+
+-- Use the newly created schema
+USE `quick_quote`;
+
+-- Drop existing tables if they exist
+DROP TABLE IF EXISTS `line_items`;
+DROP TABLE IF EXISTS `quotes`;
+DROP TABLE IF EXISTS `sales_assoc`;
+DROP TABLE IF EXISTS `office_workers`;
+
+-- Create tables
 CREATE TABLE `sales_assoc` (
   `id` varchar(20) NOT NULL,
   `first_name` varchar(20) NOT NULL,
@@ -22,7 +36,6 @@ CREATE TABLE `quotes` (
   `commission_rate` decimal(5,2) NOT NULL DEFAULT '0.00',
   `commission` decimal(10,2) NOT NULL DEFAULT '0.00',
   `ordered` tinyint NOT NULL DEFAULT '0',
-  `quotescol` varchar(45) DEFAULT NULL,
   `additional_discount` decimal(10,2) NOT NULL DEFAULT '0.00',
   `order_price` decimal(10,2) NOT NULL DEFAULT '0.00',
   PRIMARY KEY (`quote_id`),
