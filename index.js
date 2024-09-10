@@ -850,7 +850,10 @@ router.post('/order-quote', (req, res) => {
       'custid': req.body.custid,
       'amount': parseFloat(req.body.amount)
     }).then(result => {
-      let commission = parseFloat('0.' + result.data.commission) * parseFloat(req.body.amount)
+      // Note: API for placing order has since been updated, so commission is now assigned randomly (percentage between 1% and 20%)
+      let commissionNumber = Math.floor(Math.random() * (20 - 5 + 1) + 1);
+      let commission = parseFloat('0.' + commissionNumber) * parseFloat(req.body.amount)
+      console.log(`Commission Percentage: ${commissionNumber}%`)
       conn.query(`UPDATE quotes SET commission = ${commission} WHERE quote_id = "${req.body.quote_id}"`)
       conn.query(`UPDATE sales_assoc SET total_commission = total_commission + ${commission} WHERE id = "${req.body.associate}"`)
 

@@ -231,8 +231,9 @@
       `<div class="plain-text"><u>Price Breakdown</u></div>
       <div class="price">Initial Total Price: $${initial_total_price}</div>
       <div class="price">Discount: $${discount}</div>
-      <div class="price">Final Quote Price: <b>$${final_total_price}</b> <div>
-      <div class="price">Previous Additional Discount: $${additional_discount} <div>  
+      <div class="price">Final Quote Price: $${final_total_price} <div>
+      <div class="price">Additional Discount: $${additional_discount} <div>
+      <div class="price">Order Price: <b>$${order_price}</b></div>  
       <form action = '/update-additional-discount' method='POST'>
         <div class="update-discount-text">Update Discount</div>
         <input type="hidden" name="return_page" value="view-sanctioned-quote">
