@@ -1,6 +1,6 @@
 # QuickQuote
 
-Welcome to QuickQuote! This project was developed as part of a group assignment for our Introduction to Software Engineering course starting in the spring of 2023. We were given a problem statement and tasked with designing and developing a solution.
+Welcome to QuickQuote! This project was developed as part of a group assignment for our Spring 2023 Introduction to Software Engineering (CSCI 467) course at Northern Illinois University. We were given a problem statement and tasked with designing and developing a solution.
 
 ## Table Of Contents
 - [General Information](#general-information)
