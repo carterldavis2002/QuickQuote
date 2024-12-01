@@ -100,7 +100,7 @@ ALTER USER 'your_username'@'localhost' IDENTIFIED WITH caching_sha2_password BY 
 Download or clone the application repository to your local machine. You can do this via Git or downloading a .zip file of the project. You can clone the repository using the following command:
 
    ```bash
-   git clone https://github.com/bdappelhans/QuickQuote.git
+   git clone https://github.com/carterldavis2002/QuickQuote.git
    ```
 
 ### 3. Install Dependencies
